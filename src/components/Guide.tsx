@@ -37,19 +37,23 @@ const Guide = () => {
   return (
     <section
       className="flex flex-col items-center mx-auto 
-      px-[20px] mt-[80px] gap-[32px]"
+      px-[20px] md:px-[120px] mt-[80px] gap-[32px]"
     >
       <div>
-        <h1 className="text-[28px] text-center text-[#121212] font-medium">
+        <h1 className="text-[28px] md:text-[56px] text-center text-[#121212] font-medium">
           Understand and learn at ease
         </h1>
         <p className="text-center text-[18px] text-[#6d6d6d] pt-[24px] pb-[32px]">
           From key takeaways to specific questions, we've got you covered
         </p>
       </div>
-      {guides.map(({ id, ...rest }) => (
-        <GuideCard key={id} {...rest} />
-      ))}
+      <div className="flex flex-col md:grid md:grid-cols-3 gap-[32px]">
+        {guides.map(({ id, ...rest }) => (
+          <div key={id} className="first:col-span-3">
+            <GuideCard {...rest} />
+          </div>
+        ))}
+      </div>
     </section>
   );
 };

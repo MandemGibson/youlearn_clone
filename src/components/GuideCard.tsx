@@ -17,14 +17,15 @@ const GuideCard = ({ Icon, title, desc, src }: GuideCardProps) => {
     offset: ["0.5 1", "1 1"],
   });
 
-  const scale = useTransform(scrollYProgress, [0, 1], [.75, 1]);
+  const scale = useTransform(scrollYProgress, [0, 1], [0.75, 1]);
   const translateY = useTransform(scrollYProgress, [0, 1], [0, 0]);
   const translateX = useTransform(scrollYProgress, [0, 1], [70, 0]);
 
   return (
     <div
-      className="p-[32px] w-full min-w-[350px] h-min  bg-[#f6f6f6]
-      rounded-[24px] space-y-[10px] border border-[#e7e7e7]"
+      className="p-[32px] w-full min-w-[350px] h-full min-h-min bg-[#f6f6f6]
+      rounded-[24px] space-y-[10px] border border-[#e7e7e7] flex flex-col
+      md:flex-row overflow-clip"
     >
       <div>
         {Icon && <Icon className="text-xl mb-[24px]" />}
@@ -37,9 +38,13 @@ const GuideCard = ({ Icon, title, desc, src }: GuideCardProps) => {
         <motion.div
           ref={imageRef}
           style={{ scale, translateY, translateX }}
-          className="relative -bottom-3 rounded-[16px] overflow-clip"
+          className="relative -bottom-3 md:-bottom-10 md:-right-20 rounded-[16px] overflow-clip"
         >
-          <img src={src} alt={title} className="w-full h-full object-cover" />
+          <img
+            src={src}
+            alt={title}
+            className="w-full md:w-[1200px] md:h-[600px] h-full object-cover object-left-top"
+          />
         </motion.div>
       )}
     </div>
