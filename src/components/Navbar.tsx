@@ -14,7 +14,7 @@ const Navbar = () => {
   return (
     <nav
       className="w-full py-[16px] px-[20px] md:px-[40px] backdrop-blur-[10px] border-b
-     border-[#F6F6F6] fixed top-0 left-0 z-50 "
+     border-[#F6F6F6] fixed top-0 left-0 z-50"
     >
       {/*Mobile menu*/}
       <div
@@ -41,7 +41,7 @@ const Navbar = () => {
               }`}
             >
               {navItems.map((item) => (
-                <a key={item.id} href={item.link}>
+                <a key={item.id} href={item.link} className="text-[#6D6D6D]">
                   {item.name}
                 </a>
               ))}
@@ -63,7 +63,7 @@ const Navbar = () => {
           <ul className="flex gap-[16px]">
             {navItems.map(({ id, link, name }) => (
               <li key={id} className="px-[12px] py-[8px]">
-                <a href={link} className="text">
+                <a href={link} className="text-[#6D6D6D]">
                   {name}
                 </a>
               </li>

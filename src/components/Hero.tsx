@@ -1,33 +1,50 @@
 import { useRef } from "react";
 import interfaceShot from "../assets/interface.jpg";
+import interfaceVidShot from "../assets/interfaceVid.mp4";
 import { motion, useScroll, useTransform } from "motion/react";
 
 const Hero = () => {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["0.5 1", "1 1"] });
+  const imageRef = useRef(null);
+  const videoRef = useRef(null);
 
-  const scale = useTransform(scrollYProgress, [0, 1], [.75, 1]); 
-  const translateY = useTransform(scrollYProgress, [0, 1], [30, 0]); 
-  const rotateX = useTransform(scrollYProgress, [0, 1], [30, 0]);
+  const { scrollYProgress: imageScrollYProgress } = useScroll({
+    target: imageRef,
+    offset: ["0.5 1", "1 1"],
+  });
+
+  const { scrollYProgress: vidScrollYProgress } = useScroll({
+    target: videoRef,
+    offset: ["0.5 1", "1 1"],
+  });
+
+  const scale = useTransform(imageScrollYProgress, [0, 1], [0.75, 1]);
+  const translateY = useTransform(imageScrollYProgress, [0, 1], [30, 0]);
+  const rotateX = useTransform(imageScrollYProgress, [0, 1], [30, 0]);
+
+  const vidScale = useTransform(vidScrollYProgress, [0, 1], [0.75, 1]);
+  const vidTranslateY = useTransform(vidScrollYProgress, [0, 1], [30, 0]);
+  const vidRotateX = useTransform(vidScrollYProgress, [0, 1], [30, 0]);
 
   return (
-    <section className="px-[20px] py-[80px]">
-      <div className="pt-[90px] space-y-[32px]">
-        <h2 className="text-[32px] text-[#121212]">An AI tutor made for you</h2>
+    <section className="flex flex-col items-center px-[20px] py-[80px]">
+      <div className="flex flex-col items-center pt-[90px] space-y-[32px]">
+        <h2 className="text-[32px] md:text-[52px] md:font-medium text-[#121212]">
+          An AI tutor made for you
+        </h2>
         <p className="text-[18px] text-[#6D6D6D]">
           Learn from an AI tutor that understands your pdfs, videos, and
           recorded lectures
         </p>
-        <div className="flex items-center justify-evenly">
+        <div className="flex items-center md:space-x-2 justify-evenly">
           <button
             className="border border-[#E7E7E7] text-[#121212] px-[24px] 
-          py-[12px] rounded-full text-[18px]"
+          py-[12px] rounded-full text-[18px] hover:cursor-pointer"
           >
             See features
           </button>
           <button
             className="bg-[#121212] px-[24px] py-[12px] rounded-full text-[18px]
-          text-white"
+          text-white hover:cursor-pointer"
           >
             Get Started
           </button>
@@ -51,18 +68,33 @@ const Hero = () => {
             ))}
           </div>
 
-          <p className="text-[12px] text-[#6d6d6d]">
+          <p className="text-[12px] md:text-[14px] text-[#6d6d6d]">
             Loved by over 1 million learners
           </p>
         </div>
       </div>
       <motion.img
-        ref={ref}
+        ref={imageRef}
         src={interfaceShot}
         height={205}
         alt="Main chat UI"
         style={{ scale, translateY, rotateX }}
-        className="mt-[100px] rounded-[16px] border-2 border-[#4f4f4f] origin-top"
+        className="md:hidden mt-[100px] rounded-[16px] border-2 border-[#4f4f4f] origin-top"
+      />
+      <motion.video
+        ref={videoRef}
+        src={interfaceVidShot}
+        width={"80%"}
+        height={205}
+        style={{
+          scale: vidScale,
+          translateY: vidTranslateY,
+          rotateX: vidRotateX,
+        }}
+        className="hidden md:block mt-[100px] rounded-[16px] border-2 border-[#4f4f4f] origin-top"
+        autoPlay
+        loop
+        muted
       />
     </section>
   );

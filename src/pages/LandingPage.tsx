@@ -1,11 +1,11 @@
-import Hero from "../components/Hero";
-import Navbar from "../components/Navbar";
+import { Hero, Navbar, Brands } from "../components";
 
 const LandingPage = () => {
   return (
     <main className="relative">
       <Navbar />
-      <Hero/>
+      <Hero />
+      <Brands />
     </main>
   );
 };
