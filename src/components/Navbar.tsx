@@ -14,7 +14,7 @@ const Navbar = () => {
   return (
     <nav
       className="w-full py-[16px] px-[20px] md:px-[40px] backdrop-blur-[10px] border-b
-     border-[#F6F6F6] fixed top-0 left-0 z-50"
+     border-[#F6F6F6] bg-white/50 fixed top-0 left-0 z-50"
     >
       {/*Mobile menu*/}
       <div

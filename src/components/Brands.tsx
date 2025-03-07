@@ -5,7 +5,7 @@ const Brands = () => {
         Trusted by top students all over the world
       </h1>
       <div
-        className="flex items-center bg-red-500 p-[40px] gap-[100px]
+        className="flex items-center p-[40px] gap-[100px]
       min-w-screen overflow-hidden"
       >
         {[...Array(7)].map((_, index) => (
