@@ -1,4 +1,15 @@
+import { useRef } from "react";
+import interfaceShot from "../assets/interface.jpg";
+import { motion, useScroll, useTransform } from "motion/react";
+
 const Hero = () => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["0.5 1", "1 1"] });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [.75, 1]); 
+  const translateY = useTransform(scrollYProgress, [0, 1], [30, 0]); 
+  const rotateX = useTransform(scrollYProgress, [0, 1], [30, 0]);
+
   return (
     <section className="px-[20px] py-[80px]">
       <div className="pt-[90px] space-y-[32px]">
@@ -45,6 +56,14 @@ const Hero = () => {
           </p>
         </div>
       </div>
+      <motion.img
+        ref={ref}
+        src={interfaceShot}
+        height={205}
+        alt="Main chat UI"
+        style={{ scale, translateY, rotateX }}
+        className="mt-[100px] rounded-[16px] border-2 border-[#4f4f4f] origin-top"
+      />
     </section>
   );
 };
