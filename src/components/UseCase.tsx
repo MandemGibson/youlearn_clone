@@ -30,13 +30,13 @@ const UseCase = () => {
   return (
     <section
       className="flex flex-col items-center mx-auto 
-      px-[20px] md:px-[120px] my-[160px]"
+      px-[20px] md:p-[40px] my-[160px]"
     >
       <motion.h1
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 1, ease: "easeInOut" }}
-        className="text-[28px] md:text-[56px] text-center text-[#121212]
+        className="text-[28px] md:text-[40px] text-center text-[#121212]
         font-medium"
       >
         Built for any use case
@@ -53,7 +53,8 @@ const UseCase = () => {
           <FaArrowTurnDown className="inline text-[14px]" />
         </span>
       </motion.p>
-      <div className="mt-[32px] w-full space-y-[64px]">
+      <div className="flex flex-col md:flex-row mt-[32px] w-full space-y-[64px]
+      md:space-y-0 md:space-x-[24px]">
         {useCases.map((useCase) => (
           <UseCaseContainer {...useCase} />
         ))}
