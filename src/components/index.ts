@@ -5,5 +5,6 @@ import Guide from "./Guide"
 import UseCase from "./UseCase";
 import Pricing from "./Pricing";
 import Testimonials from "./Testimonials";
+import CTA from "./CTA";
 
-export { Hero, Navbar, Brands, Guide, UseCase, Pricing, Testimonials };
+export { Hero, Navbar, Brands, Guide, UseCase, Pricing, Testimonials, CTA };

@@ -1,4 +1,13 @@
-import { Hero, Navbar, Brands, Guide, UseCase, Pricing, Testimonials } from "../components";
+import {
+  Hero,
+  Navbar,
+  Brands,
+  Guide,
+  UseCase,
+  Pricing,
+  Testimonials,
+  CTA,
+} from "../components";
 
 const LandingPage = () => {
   return (
@@ -9,7 +18,8 @@ const LandingPage = () => {
       <Guide />
       <UseCase />
       <Pricing />
-      <Testimonials/>
+      <Testimonials />
+      <CTA />
     </main>
   );
 };
