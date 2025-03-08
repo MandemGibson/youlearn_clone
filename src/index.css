@@ -9,10 +9,23 @@
 
 @theme {
   --animate-scrollleft: scrollleft 10s linear 0.3s infinite;
-  
+  --animate-scroll: scroll 20s linear infinite;
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
+
   @keyframes scrollleft {
     to {
       left: -90px;
+    }
+  }
+
+  @keyframes scroll {
+    to {
+      left: calc(480 * 2 * -1);
     }
   }
 }

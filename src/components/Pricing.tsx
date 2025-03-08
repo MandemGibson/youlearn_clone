@@ -52,7 +52,7 @@ const Pricing = () => {
   return (
     <section
       className="flex flex-col items-center mx-auto 
-      px-[30px] md:px-[120px] my-[160px]"
+      px-[30px] md:px-[120px] mt-[160px]"
     >
       <motion.h1
         initial={{ opacity: 0 }}
