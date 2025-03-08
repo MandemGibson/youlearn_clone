@@ -35,16 +35,17 @@ const Hero = () => {
           Learn from an AI tutor that understands your pdfs, videos, and
           recorded lectures
         </p>
-        <div className="flex items-center md:space-x-2 justify-evenly">
+        <div className="flex items-center space-x-2 md:space-x-4 justify-evenly">
           <button
             className="border border-[#E7E7E7] text-[#121212] px-[24px] 
-          py-[12px] rounded-full text-[18px] hover:cursor-pointer"
+          py-[12px] rounded-full text-[18px] hover:cursor-pointer
+          transition ease-in delay-75 hover:bg-[#f6f6f6]"
           >
             See features
           </button>
           <button
             className="bg-[#121212] px-[24px] py-[12px] rounded-full text-[18px]
-          text-white hover:cursor-pointer"
+          text-white hover:cursor-pointer transition ease-in delay-75 hover:bg-[#121212]/80"
           >
             Get Started
           </button>

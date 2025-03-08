@@ -33,7 +33,9 @@ const PriceCard = ({
           ${price} <span className="text-[16px]">/ month</span>
         </h2>
         <p className="text-[16px]">{quote}</p>
-        <hr className={`${type === "Free" ? "text-[#e7e7e7]" : "text-[#6d6d6d]"}`} />
+        <hr
+          className={`${type === "Free" ? "text-[#e7e7e7]" : "text-[#6d6d6d]"}`}
+        />
         <div className="flex flex-col gap-[10px]">
           {benefits.map((benefit, index) => (
             <div key={index} className="flex items-center gap-[10px]">
@@ -47,7 +49,9 @@ const PriceCard = ({
       </div>
       <button
         className={`w-full ${
-          type === "Free" ? "bg-black text-white" : "bg-white text-[#121212]"
+          type === "Free"
+            ? "bg-[#121212] text-white transition ease-in delay-75 hover:bg-[#121212]/80"
+            : "bg-white text-[#121212]"
         } rounded-full py-[12px] px-[24px] hover:cursor-pointer`}
       >
         {buttonText}

@@ -11,13 +11,15 @@ const CTA = () => {
         >
           Learn smarter, faster, easier.
         </h1>
-        <p className="text-center text-[16px] text-[#6d6d6d] pt-[24px]
-        font-medium mb-[24px]">
+        <p
+          className="text-center text-[16px] text-[#6d6d6d] pt-[24px]
+        font-medium mb-[24px]"
+        >
           Upload your content, and start your learning journey.
         </p>
         <button
           className="bg-[#121212] px-[24px] py-[12px] rounded-full text-[18px]
-          text-white hover:cursor-pointer"
+          text-white hover:cursor-pointer transition ease-in delay-75 hover:bg-[#121212]/80"
         >
           Get Started
         </button>

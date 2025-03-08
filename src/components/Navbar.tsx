@@ -5,7 +5,7 @@ const navItems = [
   { id: 1, name: "Features", link: "#features" },
   { id: 2, name: "Pricing", link: "#pricing" },
   { id: 3, name: "Careers", link: "#careers" },
-]
+];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +41,11 @@ const Navbar = () => {
               }`}
             >
               {navItems.map((item) => (
-                <a key={item.id} href={item.link} className="text-[#6D6D6D] text-[14px]">
+                <a
+                  key={item.id}
+                  href={item.link}
+                  className="text-[#6D6D6D] text-[14px]"
+                >
                   {item.name}
                 </a>
               ))}
@@ -63,15 +67,21 @@ const Navbar = () => {
           <ul className="flex gap-[16px]">
             {navItems.map(({ id, link, name }) => (
               <li key={id} className="px-[12px] py-[8px]">
-                <a href={link} className="text-[#6D6D6D] text-[14px]">
+                <a
+                  href={link}
+                  className="text-[#6D6D6D] text-[14px] transition ease-in delay-75
+                   hover:text-[#121212]"
+                >
                   {name}
                 </a>
               </li>
             ))}
           </ul>
         </div>
-        <button className="bg-black text-white px-[12px] py-[8px] 
-        rounded-full hover:cursor-pointer text-[14px]">
+        <button
+          className="bg-black text-white px-[12px] py-[8px] 
+        rounded-full hover:cursor-pointer text-[14px] transition ease-in delay-75 hover:bg-[#121212]/80"
+        >
           Get Started
         </button>
       </div>

@@ -6,5 +6,6 @@ import UseCase from "./UseCase";
 import Pricing from "./Pricing";
 import Testimonials from "./Testimonials";
 import CTA from "./CTA";
+import Footer from "./Footer";
 
-export { Hero, Navbar, Brands, Guide, UseCase, Pricing, Testimonials, CTA };
+export { Hero, Navbar, Brands, Guide, UseCase, Pricing, Testimonials, CTA, Footer };

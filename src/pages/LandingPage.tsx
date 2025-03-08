@@ -7,6 +7,7 @@ import {
   Pricing,
   Testimonials,
   CTA,
+  Footer,
 } from "../components";
 
 const LandingPage = () => {
@@ -20,6 +21,7 @@ const LandingPage = () => {
       <Pricing />
       <Testimonials />
       <CTA />
+      <Footer />
     </main>
   );
 };

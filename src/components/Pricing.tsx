@@ -51,6 +51,7 @@ const prices = [
 const Pricing = () => {
   return (
     <section
+      id="pricing"
       className="flex flex-col items-center mx-auto 
       px-[30px] md:px-[120px] mt-[160px]"
     >

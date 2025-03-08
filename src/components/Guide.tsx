@@ -36,6 +36,7 @@ const guides = [
 const Guide = () => {
   return (
     <section
+      id="features"
       className="flex flex-col items-center mx-auto 
       px-[20px] md:px-[120px] my-[80px] gap-[32px]"
     >
