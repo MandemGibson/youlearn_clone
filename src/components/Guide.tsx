@@ -37,7 +37,7 @@ const Guide = () => {
   return (
     <section
       className="flex flex-col items-center mx-auto 
-      px-[20px] md:px-[120px] mt-[80px] gap-[32px]"
+      px-[20px] md:px-[120px] my-[80px] gap-[32px]"
     >
       <div>
         <h1 className="text-[28px] md:text-[56px] text-center text-[#121212] font-medium">

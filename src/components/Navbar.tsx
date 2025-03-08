@@ -41,7 +41,7 @@ const Navbar = () => {
               }`}
             >
               {navItems.map((item) => (
-                <a key={item.id} href={item.link} className="text-[#6D6D6D]">
+                <a key={item.id} href={item.link} className="text-[#6D6D6D] text-[14px]">
                   {item.name}
                 </a>
               ))}
@@ -63,7 +63,7 @@ const Navbar = () => {
           <ul className="flex gap-[16px]">
             {navItems.map(({ id, link, name }) => (
               <li key={id} className="px-[12px] py-[8px]">
-                <a href={link} className="text-[#6D6D6D]">
+                <a href={link} className="text-[#6D6D6D] text-[14px]">
                   {name}
                 </a>
               </li>
