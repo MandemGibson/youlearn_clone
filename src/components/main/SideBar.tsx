@@ -11,7 +11,7 @@ const SideBar = ({
   return (
     <div
       className="absolute w-full h-full md:max-w-[16rem] z-50
-      bg-[#000]/80 md:bg-transparent md:relative"
+      bg-[#000]/80 md:bg-transparent md:fixed"
       onClick={onClick}
     >
       <aside

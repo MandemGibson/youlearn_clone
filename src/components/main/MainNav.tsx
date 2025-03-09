@@ -8,7 +8,7 @@ const MainNav = ({ onClick }: { onClick: () => void }) => {
     >
       {/*Mobile menu*/}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-5">
+        <div className="hidden md:flex items-center space-x-5">
           <IoMenu
             size={24}
             color="white"

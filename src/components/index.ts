@@ -9,5 +9,6 @@ import CTA from "./landing page/CTA";
 import Footer from "./landing page/Footer";
 import MainNav from "./main/MainNav";
 import SideBar from "./main/SideBar";
+import TopicCard from "./main/TopicCard";
 
-export { Hero, Navbar, Brands, Guide, UseCase, Pricing, Testimonials, CTA, Footer, MainNav, SideBar };
+export { Hero, Navbar, Brands, Guide, UseCase, Pricing, Testimonials, CTA, Footer, MainNav, SideBar, TopicCard };
