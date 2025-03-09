@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import interfaceShot from "../assets/interface.jpg";
-import interfaceVidShot from "../assets/interfaceVid.mp4";
+import interfaceShot from "../../assets/interface.jpg";
+import interfaceVidShot from "../../assets/interfaceVid.mp4";
 import { motion, useScroll, useTransform } from "motion/react";
 
 const Hero = () => {

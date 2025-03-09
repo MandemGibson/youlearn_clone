@@ -8,7 +8,7 @@ import {
   Testimonials,
   CTA,
   Footer,
-} from "../components";
+} from "../../components";
 
 const LandingPage = () => {
   return (

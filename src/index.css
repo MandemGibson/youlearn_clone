@@ -10,6 +10,8 @@
 @theme {
   --animate-scrollleft: scrollleft 10s linear 0.3s infinite;
   --animate-scroll: scroll 20s linear infinite;
+  --animate-enter: enter 0.3s ease-out forwards;
+  --animate-out: out 0.3s ease-in forwards;
 }
 
 @layer utilities {
@@ -26,6 +28,28 @@
   @keyframes scroll {
     to {
       left: calc(480 * 2 * -1);
+    }
+  }
+
+  @keyframes enter {
+    0% {
+      opacity: 0;
+      transform: translateX(-100%) scale(1);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  @keyframes out {
+    0% {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-100%) scale(1);
     }
   }
 }

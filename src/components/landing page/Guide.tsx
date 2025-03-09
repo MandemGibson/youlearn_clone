@@ -1,7 +1,7 @@
 import GuideCard from "./GuideCard";
 import { BiSolidComment } from "react-icons/bi";
 import { MdFileUpload } from "react-icons/md";
-import summary from "../assets/summary.avif";
+import summary from "../../assets/summary.avif";
 import { RiAiGenerate } from "react-icons/ri";
 import { TbCaptureFilled } from "react-icons/tb";
 

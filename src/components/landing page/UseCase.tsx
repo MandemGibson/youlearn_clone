@@ -1,9 +1,9 @@
 import { FaArrowTurnDown } from "react-icons/fa6";
 import { motion } from "motion/react";
 import UseCaseContainer from "./UseCaseContainer";
-import mind from "../assets/mind.avif";
-import attention from "../assets/attention.avif";
-import brain from "../assets/brain.avif";
+import mind from "../../assets/mind.avif";
+import attention from "../../assets/attention.avif";
+import brain from "../../assets/brain.avif";
 
 const useCases = [
   {

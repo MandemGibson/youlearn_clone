@@ -1,11 +1,13 @@
-import Hero from "./Hero";
-import Navbar from "./Navbar";
-import Brands from "./Brands";
-import Guide from "./Guide"
-import UseCase from "./UseCase";
-import Pricing from "./Pricing";
-import Testimonials from "./Testimonials";
-import CTA from "./CTA";
-import Footer from "./Footer";
+import Hero from "./landing page/Hero";
+import Navbar from "./landing page/Navbar";
+import Brands from "./landing page/Brands";
+import Guide from "./landing page/Guide"
+import UseCase from "./landing page/UseCase";
+import Pricing from "./landing page/Pricing";
+import Testimonials from "./landing page/Testimonials";
+import CTA from "./landing page/CTA";
+import Footer from "./landing page/Footer";
+import MainNav from "./main/MainNav";
+import SideBar from "./main/SideBar";
 
-export { Hero, Navbar, Brands, Guide, UseCase, Pricing, Testimonials, CTA, Footer };
+export { Hero, Navbar, Brands, Guide, UseCase, Pricing, Testimonials, CTA, Footer, MainNav, SideBar };
