@@ -21,7 +21,7 @@ const CTA = () => {
           className="bg-[#121212] px-[24px] py-[12px] rounded-full text-[18px]
           text-white hover:cursor-pointer transition ease-in delay-75 hover:bg-[#121212]/80"
         >
-          Get Started
+          <a href="main">Get Started</a>
         </button>
       </div>
     </section>

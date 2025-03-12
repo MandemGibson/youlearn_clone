@@ -54,7 +54,7 @@ const PriceCard = ({
             : "bg-white text-[#121212]"
         } rounded-full py-[12px] px-[24px] hover:cursor-pointer`}
       >
-        {buttonText}
+        <a href={type === "Free" ? "main" : "pricing"}>{buttonText}</a>
       </button>
     </div>
   );

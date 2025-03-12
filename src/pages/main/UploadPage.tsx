@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MainNav, SideBar, TopicCard } from "../../components";
+import { MainNav, SideBar, SigninModal, TopicCard } from "../../components";
 import { FaPaperclip } from "react-icons/fa6";
 import { PiWaveform } from "react-icons/pi";
 import { IoArrowForward } from "react-icons/io5";
@@ -61,6 +61,8 @@ const topics = [
 const UploadPage = () => {
   const [showSideBar, setShowSideBar] = useState(false);
   const [mountSideBar, setMountSideBar] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const user = null;
 
   useEffect(() => {
     if (showSideBar) setMountSideBar(true);
@@ -77,17 +79,11 @@ const UploadPage = () => {
   };
 
   return (
-    <main
-      className="min-h-screen flex relative bg-[#121212]"
-    >
+    <main className="min-h-screen flex relative bg-[#121212]">
       <MainNav onClick={handleShowSideBar} />
       <div className="w-full flex">
         {mountSideBar && (
-          <div
-            className={`${
-              showSideBar ? "w-full md:w-[16rem]" : "w-0 md:w-[0]"
-            }`}
-          >
+          <div className={`${showSideBar ? "md:w-[16rem]" : "w-0 md:w-[0]"}`}>
             <SideBar isOpen={showSideBar} onClick={handleShowSideBar} />
           </div>
         )}
@@ -135,6 +131,7 @@ const UploadPage = () => {
                border-2 text-white border-dashed border-[#fafafa1a]
              bg-[#17171766] rounded-xl sm:pr-[10rem] md:pr-[20rem] hover:cursor-pointer
              hover:bg-[#fafafa0d]"
+              onClick={() => (user === null ? setOpenModal(true) : undefined)}
             >
               <FaPlus className="w-4 h-4" />
               <p className="text-[16px]">Add space</p>
@@ -159,6 +156,7 @@ const UploadPage = () => {
           </div>
         </div>
       </div>
+      {openModal && <SigninModal />}
     </main>
   );
 };

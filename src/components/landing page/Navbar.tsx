@@ -54,7 +54,7 @@ const Navbar = () => {
               className="w-full bg-black text-white py-[8px] rounded-full
             mb-[40px]"
             >
-              Get Started
+              <a href="/main">Get Started</a>
             </button>
           </>
         )}
@@ -82,7 +82,7 @@ const Navbar = () => {
           className="bg-black text-white px-[12px] py-[8px] 
         rounded-full hover:cursor-pointer text-[14px] transition ease-in delay-75 hover:bg-[#121212]/80"
         >
-          Get Started
+          <a href="main">Get Started</a>
         </button>
       </div>
     </nav>

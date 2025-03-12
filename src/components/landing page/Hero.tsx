@@ -41,13 +41,13 @@ const Hero = () => {
           py-[12px] rounded-full text-[18px] hover:cursor-pointer
           transition ease-in delay-75 hover:bg-[#f6f6f6]"
           >
-            See features
+            <a href="#features">See features</a>
           </button>
           <button
             className="bg-[#121212] px-[24px] py-[12px] rounded-full text-[18px]
           text-white hover:cursor-pointer transition ease-in delay-75 hover:bg-[#121212]/80"
           >
-            Get Started
+            <a href="main">Get Started</a>
           </button>
         </div>
         <div className="flex items-center justify-center space-x-[10px]">
