@@ -11,5 +11,9 @@ import MainNav from "./main/MainNav";
 import SideBar from "./main/SideBar";
 import TopicCard from "./main/TopicCard";
 import SigninModal from "./main/SigninModal";
+import LanguageDropdown from "./main/LanguageDropdown";
 
-export { Hero, Navbar, Brands, Guide, UseCase, Pricing, Testimonials, CTA, Footer, MainNav, SideBar, TopicCard, SigninModal };
+export {
+    Hero, Navbar, Brands, Guide, UseCase, Pricing,
+    Testimonials, CTA, Footer, MainNav, SideBar, TopicCard, SigninModal, LanguageDropdown
+};

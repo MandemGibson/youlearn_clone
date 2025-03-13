@@ -1,4 +1,5 @@
 import { IoMenu } from "react-icons/io5";
+import LanguageDropdown from "./LanguageDropdown";
 
 const MainNav = ({ onClick }: { onClick: () => void }) => {
   return (
@@ -24,21 +25,15 @@ const MainNav = ({ onClick }: { onClick: () => void }) => {
           onClick={onClick}
         />
         <div className="flex space-x-2">
-          <select
-            className="py-[8px] px-[12px] rounded-[0.75rem] border
-          border-[#262626] text-white text-sm"
-          >
-            <option value="US GB">US GB</option>
-          </select>
+          <LanguageDropdown />
           <button
             className="py-2 px-4 rounded-[0.75rem] bg-[#fafafa]
-          text-sm"
+          text-sm hover:cursor-pointer"
           >
             Sign in
           </button>
         </div>
       </div>
-      {/*Desktop menu*/}
     </nav>
   );
 };

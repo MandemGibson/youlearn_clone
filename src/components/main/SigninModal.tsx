@@ -5,10 +5,12 @@ const SigninModal = ({ onClose }: { onClose: () => void }) => {
     <div
       className="fixed inset-0 h-full w-full backdrop-blur-md flex items-center
        justify-center z-50 bg-[#000]/80"
+      onClick={onClose}
     >
       <div
         className="w-full space-y-[6px] bg-[#0a0a0a] p-6 text-center
       border border-[#262626] sm:max-w-max sm:text-left rounded-[12px] relative"
+        onClick={(e) => e.stopPropagation()}
       >
         <IoIosClose
           onClick={onClose}
@@ -16,7 +18,7 @@ const SigninModal = ({ onClose }: { onClose: () => void }) => {
           size={24}
           className="absolute right-3 top-3 hover:cursor-pointer"
         />
-        <h1 className="font-manrope font-medium text-[18px] text-[#a3a3a3]">
+        <h1 className="font-manrope font-medium text-[18px] text-[#fafafa]">
           Sign in or create an account
         </h1>
         <p className="text-[14px] text-[#a3a3a3] sm:mb-[18px]">
