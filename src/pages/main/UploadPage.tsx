@@ -62,11 +62,21 @@ const UploadPage = () => {
   const [showSideBar, setShowSideBar] = useState(false);
   const [mountSideBar, setMountSideBar] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+
   const user = null;
 
   useEffect(() => {
     if (showSideBar) setMountSideBar(true);
   }, [showSideBar]);
+
+  useEffect(() => {
+    if (openModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [openModal]);
 
   const handleShowSideBar = () => {
     if (showSideBar) {
@@ -91,7 +101,7 @@ const UploadPage = () => {
         <div
           className="w-full min-h-screen flex flex-col px-6 
          items-center justify-center overflow-y-auto gap-[40px]
-         sm:px-[62px] md:px-[168px] relative pt-[100px]
+         sm:px-[62px] md:px-[168px] relative p-[100px]
          transition-all duration-300 ease-in"
         >
           <div className="flex flex-col items-center w-full gap-6">
@@ -104,20 +114,34 @@ const UploadPage = () => {
             >
               <input
                 type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Upload file, paste YouTube video, or record a lecture"
                 className="p-2 text-[15px] placeholder:text-[#fafafa90] text-[#fafafa] 
                focus:outline-none"
               />
               <div className="flex items-center justify-between">
                 <div className="flex space-x-[8px]">
-                  <button className="p-2">
+                  <button
+                    className="p-2 hover:bg-[#fafafa80]/20 rounded-lg transition
+                  hover:cursor-pointer"
+                  >
                     <FaPaperclip size={20} />
                   </button>
-                  <button className="p-2">
+                  <button
+                    className="p-2 hover:bg-[#fafafa80]/20 rounded-lg transition
+                  hover:cursor-pointer"
+                  >
                     <PiWaveform size={20} />
                   </button>
                 </div>
-                <button className="p-2 bg-[#fafafa80] rounded-lg">
+                <button
+                  className={`p-2 ${
+                    inputValue == ""
+                      ? "bg-[#fafafa80]"
+                      : "bg-[#fafafa] hover:cursor-pointer"
+                  } rounded-lg`}
+                >
                   <IoArrowForward size={20} color="black" />
                 </button>
               </div>
@@ -156,7 +180,7 @@ const UploadPage = () => {
           </div>
         </div>
       </div>
-      {openModal && <SigninModal />}
+      {openModal && <SigninModal onClose={() => setOpenModal(false)} />}
     </main>
   );
 };
