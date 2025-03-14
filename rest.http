@@ -1,0 +1,2 @@
+###
+GET https://ai-inference-service-pp473w3lr.vercel.app/v1/inference/models

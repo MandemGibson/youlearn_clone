@@ -1,6 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import { AuthForm, Wrapper } from "../../components";
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
+  const handleSignUp = (values: { email: string; password: string }) => {
+    //TODO:save data to db
+    console.log(values);
+    //navigate to personal form
+    navigate("/personal-form");
+  };
   return (
     <Wrapper>
       <AuthForm
@@ -11,6 +19,7 @@ const SignUpPage = () => {
         footerText="Already have an account?"
         footerLinkText="Sign in"
         footerLinkHref="/login"
+        onSubmit={handleSignUp}
       />
     </Wrapper>
   );

@@ -10,6 +10,7 @@ type AuthFormProps = {
   footerText: string;
   footerLinkText: string;
   footerLinkHref: string;
+  onSubmit?: (values: { email: string; password: string }) => void;
 };
 
 const AuthForm: FC<AuthFormProps> = ({
@@ -20,6 +21,7 @@ const AuthForm: FC<AuthFormProps> = ({
   footerText,
   footerLinkText,
   footerLinkHref,
+  onSubmit,
 }) => {
   const [values, setValues] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -67,7 +69,15 @@ const AuthForm: FC<AuthFormProps> = ({
       <h1 className="text-[20px] text-white font-semibold">
         U<span className="relative -bottom-2">L</span>
       </h1>
-      <form className="w-full flex flex-col items-center gap-[16px] sm:max-w-max">
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (onSubmit && isValidForm) {
+            onSubmit(values);
+          }
+        }}
+        className="w-full flex flex-col items-center gap-[16px] sm:max-w-max"
+      >
         <h1 className="text-[#fafafa] text-[20px]">{title}</h1>
         <p className="text-[#a3a3a3] text-[16px]">{subtitle}</p>
 
