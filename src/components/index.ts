@@ -13,9 +13,10 @@ import TopicCard from "./main/TopicCard";
 import SigninModal from "./main/SigninModal";
 import LanguageDropdown from "./main/LanguageDropdown";
 import Wrapper from "./main/Wrapper";
+import AuthForm from "./auth/AuthForm";
 
 export {
     Hero, Navbar, Brands, Guide, UseCase, Pricing,
     Testimonials, CTA, Footer, MainNav, SideBar, TopicCard, SigninModal, LanguageDropdown,
-    Wrapper
+    Wrapper, AuthForm
 };
