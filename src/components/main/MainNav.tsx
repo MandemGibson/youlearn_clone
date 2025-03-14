@@ -10,7 +10,7 @@ const MainNav = ({ onClick }: { onClick: () => void }) => {
     .some(
       (path) =>
         path === "login" ||
-        path === "register" ||
+        path === "signup" ||
         path === "forgot-password" ||
         path === "reset-password"
     );
