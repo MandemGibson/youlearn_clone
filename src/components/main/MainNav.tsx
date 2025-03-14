@@ -1,7 +1,20 @@
 import { IoMenu } from "react-icons/io5";
 import LanguageDropdown from "./LanguageDropdown";
+import { useLocation } from "react-router-dom";
 
 const MainNav = ({ onClick }: { onClick: () => void }) => {
+  const { pathname } = useLocation();
+
+  const isAuthPage = pathname
+    .split("/")
+    .some(
+      (path) =>
+        path === "login" ||
+        path === "register" ||
+        path === "forgot-password" ||
+        path === "reset-password"
+    );
+
   return (
     <nav
       className="w-full p-[10px] md:px-[20px] fixed
@@ -25,12 +38,12 @@ const MainNav = ({ onClick }: { onClick: () => void }) => {
           onClick={onClick}
         />
         <div className="flex space-x-2">
-          <LanguageDropdown />
+          {!isAuthPage && <LanguageDropdown />}
           <button
             className="py-2 px-4 rounded-[0.75rem] bg-[#fafafa]
           text-sm hover:cursor-pointer"
           >
-            Sign in
+            <a href="login">Sign in</a>
           </button>
         </div>
       </div>

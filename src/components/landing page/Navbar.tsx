@@ -52,9 +52,9 @@ const Navbar = () => {
             </div>
             <button
               className="w-full bg-black text-white py-[8px] rounded-full
-            mb-[40px]"
+            mb-[40px] hover:cursor-pointer"
             >
-              <a href="/main">Get Started</a>
+              <a href="main">Get Started</a>
             </button>
           </>
         )}

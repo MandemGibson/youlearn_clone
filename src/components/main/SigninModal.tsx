@@ -33,13 +33,13 @@ const SigninModal = ({ onClose }: { onClose: () => void }) => {
             className="py-2 px-4 sm:py-3 rounded-[0.75rem] bg-[#fafafa]
           text-sm w-full sm:max-w-max hover:cursor-pointer"
           >
-            Sign in
+            <a href="login">Sign in</a>
           </button>
           <button
             className="py-2 px-4 sm:py-3 rounded-[0.75rem] bg-[#262626]
           text-sm w-full sm:max-w-max text-[#fafafa] hover:cursor-pointer"
           >
-            Sign up
+            <a href="signup">Sign up</a>
           </button>
         </div>
       </div>
