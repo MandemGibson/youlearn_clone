@@ -13,6 +13,7 @@ interface DropdownProps {
   onSelect: (option: DropdownOption) => void;
   className?: string;
   parentWidth?: string;
+  position?: "top" | "bottom" 
 }
 
 const Dropdown = ({
@@ -21,7 +22,12 @@ const Dropdown = ({
   onSelect,
   className,
   parentWidth,
+  position="bottom"
 }: DropdownProps) => {
+  const positionClasses = {
+    top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
+    bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
+  };
   const [open, setOpen] = useState(false);
 
   const handleSelect = (option: DropdownOption) => {
@@ -48,9 +54,9 @@ const Dropdown = ({
 
       {open && (
         <div
-          className="absolute top-full left-0 mt-1 bg-[#000] 
+          className={`absolute ${positionClasses[position]} left-0 mt-1 bg-[#000] 
         border border-[#262626] w-max rounded-[0.75rem] shadow-lg
-         z-50 max-h-[300px] overflow-y-auto scrollbar-hide"
+         z-50 max-h-[300px] overflow-y-auto scrollbar-hide`}
         >
           {options.map((option) => (
             <button

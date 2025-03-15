@@ -11,9 +11,11 @@ const educationLevels: DropdownOption[] = [
 const UniversityDropdown = ({
   className,
   parentWidth,
+  position,
 }: {
   className?: string;
   parentWidth: string;
+  position?: "top" | "bottom";
 }) => {
   const [selectedUniversity, setSelectedUniversity] = useState<DropdownOption>(
     educationLevels[0]
@@ -23,6 +25,7 @@ const UniversityDropdown = ({
     <Dropdown
       className={className}
       parentWidth={parentWidth}
+      position={position}
       options={educationLevels}
       selected={selectedUniversity}
       onSelect={setSelectedUniversity}

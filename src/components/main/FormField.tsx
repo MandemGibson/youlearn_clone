@@ -16,8 +16,13 @@ const FormField = ({
   className,
 }: FormFieldProps) => {
   return (
-    <div className={`flex flex-col items-center w-full ${className}`}>
-      <label htmlFor={inputProps?.id || inputProps?.name}>{label}</label>
+    <div className={`flex flex-col items-center gap-1 w-full ${className}`}>
+      <label
+        htmlFor={inputProps?.id || inputProps?.name}
+        className="text-[14px] text-[#fafafa] font-medium"
+      >
+        {label}
+      </label>
       {type === "input" ? (
         <div className="w-full p-3 border border-[#fafafa1a] rounded-[0.75rem]">
           <input
@@ -28,7 +33,7 @@ const FormField = ({
       ) : (
         children
       )}
-      {subtext && <p className="text-sm text-gray-400 mt-1">{subtext}</p>}
+      {subtext && <p className="text-[14px] text-[#a3a3a3]">{subtext}</p>}
     </div>
   );
 };

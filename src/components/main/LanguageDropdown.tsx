@@ -16,9 +16,11 @@ const languages: DropdownOption[] = [
 const LanguageDropdown = ({
   className,
   parentWidth,
+  position
 }: {
   className?: string;
   parentWidth: string;
+  position?: "top" | "bottom";
 }) => {
   const [selectedLang, setSelectedLang] = useState<DropdownOption>(
     languages[0]
@@ -28,6 +30,7 @@ const LanguageDropdown = ({
     <Dropdown
       className={className}
       parentWidth={parentWidth}
+      position={position}
       options={languages}
       selected={selectedLang}
       onSelect={setSelectedLang}

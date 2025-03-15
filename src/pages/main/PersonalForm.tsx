@@ -1,21 +1,46 @@
+import { IconType } from "react-icons";
 import {
   EducationLevelDropdown,
   FormField,
   LanguageDropdown,
   Wrapper,
 } from "../../components";
+import { FiSend } from "react-icons/fi";
+import { RiSkipRightLine } from "react-icons/ri";
+
+const Button = ({
+  text,
+  Icon,
+  className,
+}: {
+  text: string;
+  Icon: IconType;
+  className?: string;
+}) => {
+  return (
+    <button
+      className={`${className} flex items-center gap-2 w-full
+     py-3 bg-white text-[14px] justify-center rounded-[0.75rem]
+     hover:cursor-pointer`}
+    >
+      {text}
+      {Icon && <Icon size={18} />}
+    </button>
+  );
+};
 
 const PersonalForm = () => {
   return (
     <Wrapper>
       <div
         className="flex flex-col items-center justify-center w-full
-      min-h-screen px-1 space-y-5 overflow-y-auto"
+        min-h-screen px-1 space-y-5 overflow-y-auto pt-[100px] pb-2
+        sm:max-w-max mx-auto"
       >
         <h1 className="text-[20px] text-white font-semibold">
           U<span className="relative -bottom-2">L</span>
         </h1>
-        <h2 className="text-center">
+        <h2 className="text-center text-[18px] text-[#fafafab2]">
           Help us tailor your experience to your learning habits and goals
         </h2>
         <FormField
@@ -45,8 +70,20 @@ const PersonalForm = () => {
           subtext="Choose your language"
           type="custom"
         >
-          <LanguageDropdown className="py-3 w-full" parentWidth="w-full" />
+          <LanguageDropdown
+            position="top"
+            className="py-3 w-full"
+            parentWidth="w-full"
+          />
         </FormField>
+        <div className="w-full flex flex-col gap-2">
+          <Button text="Finish" Icon={FiSend} />
+          <Button
+            text="Skip"
+            Icon={RiSkipRightLine}
+            className="!bg-[#262626] text-[#fafafa]"
+          />
+        </div>
       </div>
     </Wrapper>
   );
