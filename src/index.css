@@ -19,6 +19,10 @@
     scrollbar-width: none;
   }
 
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
   @keyframes scrollleft {
     to {
       left: -90px;

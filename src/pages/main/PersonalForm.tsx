@@ -7,21 +7,25 @@ import {
 } from "../../components";
 import { FiSend } from "react-icons/fi";
 import { RiSkipRightLine } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 
 const Button = ({
   text,
   Icon,
   className,
+  onClick,
 }: {
   text: string;
   Icon: IconType;
   className?: string;
+  onClick: () => void;
 }) => {
   return (
     <button
       className={`${className} flex items-center gap-2 w-full
      py-3 bg-white text-[14px] justify-center rounded-[0.75rem]
      hover:cursor-pointer`}
+      onClick={onClick}
     >
       {text}
       {Icon && <Icon size={18} />}
@@ -30,6 +34,7 @@ const Button = ({
 };
 
 const PersonalForm = () => {
+  const navigate = useNavigate();
   return (
     <Wrapper>
       <div
@@ -77,10 +82,15 @@ const PersonalForm = () => {
           />
         </FormField>
         <div className="w-full flex flex-col gap-2">
-          <Button text="Finish" Icon={FiSend} />
+          <Button
+            text="Finish"
+            Icon={FiSend}
+            onClick={() => navigate("/main")}
+          />
           <Button
             text="Skip"
             Icon={RiSkipRightLine}
+            onClick={() => navigate("/main")}
             className="!bg-[#262626] text-[#fafafa]"
           />
         </div>

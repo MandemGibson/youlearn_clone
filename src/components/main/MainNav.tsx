@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 
 const MainNav = ({ onClick }: { onClick: () => void }) => {
   const { pathname } = useLocation();
+  const user = true;
 
   const isAuthPage = pathname
     .split("/")
@@ -37,15 +38,25 @@ const MainNav = ({ onClick }: { onClick: () => void }) => {
           className="ml-[10px] md:hidden"
           onClick={onClick}
         />
-        <div className="flex space-x-2">
-          {!isAuthPage && <LanguageDropdown />}
+        {!user ? (
+          <div className="flex space-x-2">
+            {!isAuthPage && <LanguageDropdown />}
+            <button
+              className="py-2 px-4 rounded-[0.75rem] bg-[#fafafa]
+              text-sm hover:cursor-pointer"
+            >
+              <a href="login">Sign in</a>
+            </button>
+          </div>
+        ) : (
           <button
-            className="py-2 px-4 rounded-[0.75rem] bg-[#fafafa]
-          text-sm hover:cursor-pointer"
+            className="py-2 px-4 rounded-[0.75rem] border-2 border-[#3cb371]
+            text-sm text-[#3cb371] shadow-lg shadow-[#3cb371]/20
+             hover:cursor-pointer hover:bg-[#3cb371]/20 transition"
           >
-            <a href="login">Sign in</a>
+            <a href="login">Upgrade</a>
           </button>
-        </div>
+        )}
       </div>
     </nav>
   );

@@ -19,7 +19,7 @@ const LanguageDropdown = ({
   position
 }: {
   className?: string;
-  parentWidth: string;
+  parentWidth?: string;
   position?: "top" | "bottom";
 }) => {
   const [selectedLang, setSelectedLang] = useState<DropdownOption>(

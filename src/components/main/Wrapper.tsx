@@ -14,6 +14,10 @@ const Wrapper: FC<WrapperProps> = ({ children }) => {
     if (showSideBar) setMountSideBar(true);
   }, [showSideBar]);
 
+  useEffect(() => {
+    document.body.style.overflow = showSideBar ? "hidden" : "auto";
+  }, [showSideBar]);
+
   const handleShowSideBar = () => {
     if (showSideBar) {
       setShowSideBar(false);
