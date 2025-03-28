@@ -1,6 +1,6 @@
 import { IoMenu } from "react-icons/io5";
 import LanguageDropdown from "./LanguageDropdown";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 const MainNav = ({ onClick }: { onClick: () => void }) => {
@@ -41,21 +41,23 @@ const MainNav = ({ onClick }: { onClick: () => void }) => {
         {!user ? (
           <div className="flex space-x-2">
             {!isAuthPage && <LanguageDropdown />}
-            <button
+            <Link
+              to="/login"
               className="py-2 px-4 rounded-[0.75rem] bg-[#fafafa]
               text-sm hover:cursor-pointer"
             >
-              <a href="login">Sign in</a>
-            </button>
+              Sign in
+            </Link>
           </div>
         ) : (
-          <button
+          <Link
+            to="/price"
             className="py-2 px-4 rounded-[0.75rem] border-2 border-[#3cb371]
             text-sm text-[#3cb371] shadow-lg shadow-[#3cb371]/20
              hover:cursor-pointer hover:bg-[#3cb371]/20 transition"
           >
-            <a href="login">Upgrade</a>
-          </button>
+            Upgrade
+          </Link>
         )}
       </div>
     </nav>

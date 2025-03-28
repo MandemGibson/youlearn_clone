@@ -1,10 +1,6 @@
 import { ChangeEvent, FC, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-import { useAuth } from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
-import supabase from "../../utils/supabase";
-import { User } from "../../context api/AuthContext";
 
 type AuthFormProps = {
   title: string;
@@ -14,6 +10,7 @@ type AuthFormProps = {
   footerText: string;
   footerLinkText: string;
   footerLinkHref: string;
+  errorMessage?: string;
   onSubmit?: (values: { email: string; password: string }) => void;
 };
 
@@ -25,15 +22,12 @@ const AuthForm: FC<AuthFormProps> = ({
   footerText,
   footerLinkText,
   footerLinkHref,
+  errorMessage,
   onSubmit,
 }) => {
-  const { setIsLoading, setUser } = useAuth();
-  const navigate = useNavigate();
-
   const [values, setValues] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ email: "", password: "" });
-  const [errorMessage, setErrorMessage] = useState("");
 
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -70,32 +64,10 @@ const AuthForm: FC<AuthFormProps> = ({
 
   const handlePasswordVisibility = () => setShowPassword(!showPassword);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    setIsLoading(true);
-    try {
-      event.preventDefault();
-      if (onSubmit && isValidForm) {
-        onSubmit(values);
-      }
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      });
-
-      if (error) {
-        console.error("Error signing in: ", error.message);
-        setErrorMessage(error.message);
-        return;
-      }
-      console.log(data);
-
-      setUser(data.user as User);
-      navigate("/main");
-    } catch (error) {
-      console.error("Error signing in: ", error);
-    } finally {
-      setIsLoading(false);
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (onSubmit && isValidForm) {
+      onSubmit(values);
     }
   };
 

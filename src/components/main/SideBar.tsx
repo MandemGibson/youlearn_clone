@@ -11,6 +11,7 @@ import { LuCrown, LuLogOut } from "react-icons/lu";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { useAuth } from "../../hooks/useAuth";
 import supabase from "../../utils/supabase";
+import { Link } from "react-router-dom";
 
 const SideBar = ({
   isOpen,
@@ -122,12 +123,13 @@ const SideBar = ({
           {!user ? (
             <div className="flex flex-col items-center space-y-3 text-[14px]">
               <h3 className="text-[#fafafa99]">Sign in to continue.</h3>
-              <button
+              <Link
+                to="/login"
                 className="py-[.5rem] text-[#171717] rounded-lg
-                w-full bg-white"
+                w-full bg-white flex items-center justify-center"
               >
                 Sign in
-              </button>
+              </Link>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center">
@@ -172,6 +174,7 @@ const IconAndTitle = ({
 const Dropdown = () => {
   const [open, setOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const { setUser, setIsLoading, isLoading } = useAuth();
 
   const toggleDarkMode = () => {
     setDarkMode((prev) => !prev);
@@ -179,8 +182,19 @@ const Dropdown = () => {
   };
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    console.error(error?.message);
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Error logging out: ", error?.message);
+        return;
+      }
+      setUser(null);
+    } catch (error) {
+      console.error("Error logging out: ", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -241,7 +255,10 @@ const Dropdown = () => {
             onClick={handleLogout}
             className="p-1 border-t border-[#262626]"
           >
-            <IconAndTitle Icon={LuLogOut} title="Log out" />
+            <IconAndTitle
+              Icon={LuLogOut}
+              title={isLoading ? "Logging out" : "Log out"}
+            />
           </button>
         </div>
       )}
