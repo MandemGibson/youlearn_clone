@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { SigninModal, TopicCard, Wrapper } from "../../components";
 import { FaPaperclip } from "react-icons/fa6";
 import { PiWaveform } from "react-icons/pi";
 import { IoArrowForward } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa6";
+import { useAuth } from "../../hooks/useAuth";
 // import axios from "axios";
 
 const topics = [
@@ -60,10 +61,22 @@ const topics = [
 ];
 
 const UploadPage = () => {
+  const { user } = useAuth();
+
   const [openModal, setOpenModal] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  // const [spaces, setSpaces] = useState([]);
+  const [file, setFile] = useState<string | undefined>(undefined);
 
-  const user = null;
+  const handleUploadFile = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files ? event.target.files[0] : null;
+    if (selectedFile && selectedFile.type === "application/pdf") {
+      setFile(URL.createObjectURL(selectedFile));
+      alert(selectedFile.name)
+    } else {
+      alert("Please upload a valid PDF file.");
+    }
+  };
 
   return (
     <Wrapper>
@@ -91,12 +104,20 @@ const UploadPage = () => {
             />
             <div className="flex items-center justify-between">
               <div className="flex space-x-[8px]">
-                <button
+                <label
+                  htmlFor="file"
                   className="p-2 hover:bg-[#fafafa80]/20 rounded-lg transition
-                  hover:cursor-pointer"
+                hover:cursor-pointer"
                 >
                   <FaPaperclip size={20} />
-                </button>
+                </label>
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handleUploadFile}
+                  id="file"
+                  className="sr-only"
+                />
                 <button
                   className="p-2 hover:bg-[#fafafa80]/20 rounded-lg transition
                   hover:cursor-pointer"
@@ -116,6 +137,7 @@ const UploadPage = () => {
             </div>
           </div>
         </div>
+        {file && <iframe src={file} width="100%" height={500}/>}
 
         <div className="flex flex-col w-full space-y-3">
           <h2 className="text-[#fafafa] text-[16px]">My spaces</h2>

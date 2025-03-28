@@ -1,6 +1,10 @@
 import { ChangeEvent, FC, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import supabase from "../../utils/supabase";
+import { User } from "../../context api/AuthContext";
 
 type AuthFormProps = {
   title: string;
@@ -23,9 +27,13 @@ const AuthForm: FC<AuthFormProps> = ({
   footerLinkHref,
   onSubmit,
 }) => {
+  const { setIsLoading, setUser } = useAuth();
+  const navigate = useNavigate();
+
   const [values, setValues] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ email: "", password: "" });
+  const [errorMessage, setErrorMessage] = useState("");
 
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -53,8 +61,6 @@ const AuthForm: FC<AuthFormProps> = ({
             value.length < 8 ? "Password must be at least 8 characters" : "",
         }));
         break;
-      default:
-        break;
     }
   };
 
@@ -64,18 +70,42 @@ const AuthForm: FC<AuthFormProps> = ({
 
   const handlePasswordVisibility = () => setShowPassword(!showPassword);
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setIsLoading(true);
+    try {
+      event.preventDefault();
+      if (onSubmit && isValidForm) {
+        onSubmit(values);
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (error) {
+        console.error("Error signing in: ", error.message);
+        setErrorMessage(error.message);
+        return;
+      }
+      console.log(data);
+
+      setUser(data.user as User);
+      navigate("/main");
+    } catch (error) {
+      console.error("Error signing in: ", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center w-full min-h-screen px-1 space-y-5">
       <h1 className="text-[20px] text-white font-semibold">
         U<span className="relative -bottom-2">L</span>
       </h1>
       <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (onSubmit && isValidForm) {
-            onSubmit(values);
-          }
-        }}
+        onSubmit={handleSubmit}
         className="w-full flex flex-col items-center gap-[16px] sm:max-w-max"
       >
         <h1 className="text-[#fafafa] text-[20px]">{title}</h1>
@@ -104,9 +134,10 @@ const AuthForm: FC<AuthFormProps> = ({
             name="email"
             value={values.email}
             onChange={handleChangeValues}
+            autoFocus
             placeholder="Enter your email"
             className="bg-inherit focus:outline-none text-[#fafafa]
-              pl-3 text-[16px] w-full"
+              pl-3 text-[16px] w-full h-full"
           />
         </div>
         {errors.email && (
@@ -144,6 +175,11 @@ const AuthForm: FC<AuthFormProps> = ({
         {errors.password && (
           <p className="text-red-400 text-sm w-full text-center">
             {errors.password}
+          </p>
+        )}
+        {errorMessage && (
+          <p className="text-red-400 text-sm w-full text-center">
+            {errorMessage}
           </p>
         )}
 

@@ -9,14 +9,34 @@ type WrapperProps = {
 const Wrapper: FC<WrapperProps> = ({ children }) => {
   const [showSideBar, setShowSideBar] = useState(false);
   const [mountSideBar, setMountSideBar] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+    if (window.innerWidth >= 768) {
+      setShowSideBar(true);
+    } else {
+      setShowSideBar(false);
+    }
+  };
 
   useEffect(() => {
-    if (showSideBar) setMountSideBar(true);
-  }, [showSideBar]);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  });
 
   useEffect(() => {
-    document.body.style.overflow = showSideBar ? "hidden" : "auto";
-  }, [showSideBar]);
+    if (showSideBar) {
+      setMountSideBar(true);
+    }
+    if (showSideBar && isMobile) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [showSideBar, isMobile]);
 
   const handleShowSideBar = () => {
     if (showSideBar) {

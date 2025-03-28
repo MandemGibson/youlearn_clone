@@ -17,7 +17,7 @@ const TopicCard: FC<TopicCardProps> = ({ title, thumbnail }) => {
         <button className="absolute p-1 rounded-full top-2 right-2 bg-[#fafafa]">
           <IoMdMore size={16} color="black" />
         </button>
-        <img src={thumbnail} alt="" />
+        <img src={thumbnail} alt={title} />
       </div>
       <h2
         className="my-[10px] px-[8px] w-full text-ellipsis

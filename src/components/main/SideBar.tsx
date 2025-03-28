@@ -1,4 +1,3 @@
-"use client";
 import { ReactNode, useState } from "react";
 import { IconType } from "react-icons";
 import { AiOutlineDiscord } from "react-icons/ai";
@@ -10,6 +9,8 @@ import { IoIosArrowForward, IoIosMore } from "react-icons/io";
 import { IoChevronDown, IoSettingsOutline } from "react-icons/io5";
 import { LuCrown, LuLogOut } from "react-icons/lu";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
+import { useAuth } from "../../hooks/useAuth";
+import supabase from "../../utils/supabase";
 
 const SideBar = ({
   isOpen,
@@ -18,11 +19,11 @@ const SideBar = ({
   isOpen: boolean;
   onClick: () => void;
 }) => {
-  const user = true;
+  const { user } = useAuth();
 
   return (
     <div
-      className="absolute w-full h-full md:max-w-[16rem] z-50
+      className="fixed w-full h-full md:max-w-[16rem] z-50
       bg-[#000]/80 md:bg-transparent sm:fixed"
       onClick={onClick}
     >
@@ -177,6 +178,11 @@ const Dropdown = () => {
     document.documentElement.classList.toggle("dark", !darkMode);
   };
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    console.error(error?.message);
+  };
+
   return (
     <div className={`w-full relative text-white text-sm`}>
       <button
@@ -220,7 +226,9 @@ const Dropdown = () => {
                   }`}
                 >
                   <div
-                    className={`w-3 h-3 ${darkMode ? "bg-[#000]" : "bg-[#fff]"} rounded-full transition-transform duration-300 ${
+                    className={`w-3 h-3 ${
+                      darkMode ? "bg-[#000]" : "bg-[#fff]"
+                    } rounded-full transition-transform duration-300 ${
                       darkMode ? "translate-x-3.5" : "-translate-x-0.5"
                     }`}
                   />
@@ -229,9 +237,12 @@ const Dropdown = () => {
               title="Dark Mode"
             />
           </div>
-          <div className="p-1 border-t border-[#262626]">
+          <button
+            onClick={handleLogout}
+            className="p-1 border-t border-[#262626]"
+          >
             <IconAndTitle Icon={LuLogOut} title="Log out" />
-          </div>
+          </button>
         </div>
       )}
     </div>

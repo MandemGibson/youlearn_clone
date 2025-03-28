@@ -1,10 +1,11 @@
 import { IoMenu } from "react-icons/io5";
 import LanguageDropdown from "./LanguageDropdown";
 import { useLocation } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const MainNav = ({ onClick }: { onClick: () => void }) => {
   const { pathname } = useLocation();
-  const user = true;
+  const { user } = useAuth();
 
   const isAuthPage = pathname
     .split("/")
@@ -21,7 +22,6 @@ const MainNav = ({ onClick }: { onClick: () => void }) => {
       className="w-full p-[10px] md:px-[20px] fixed
      border-[#F6F6F6] bg-[#121212] top-0 left-0 z-10"
     >
-      {/*Mobile menu*/}
       <div className="flex items-center justify-between">
         <div className="hidden md:flex items-center space-x-5">
           <IoMenu
