@@ -5,4 +5,7 @@ import SignUpPage from "./auth/SignUpPage";
 import ForgotPassword from "./auth/ForgotPassword";
 import PersonalForm from "./main/PersonalForm";
 
-export { LandingPage, UploadPage, SignInPage, SignUpPage, ForgotPassword, PersonalForm }
+export {
+    LandingPage, UploadPage, SignInPage, SignUpPage, ForgotPassword,
+    PersonalForm
+}

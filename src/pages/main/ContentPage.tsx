@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useContent } from "../../hooks/useContent";
 import { useNavigate } from "react-router-dom";
-import { Wrapper } from "../../components";
+import { Chapters, Chat, Flashcards, Notes, Quizzes, Summary, Wrapper } from "../../components";
 import { RxDragHandleDots2 } from "react-icons/rx";
 import { BsChevronBarLeft } from "react-icons/bs";
 import { IoChatbubbleOutline } from "react-icons/io5";
@@ -25,6 +25,25 @@ const ContentPage = () => {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [tab, setTab] = useState(1);
+
+  const renderComponent = () => {
+    switch (tab) {
+      case 1:
+        return <Chat />;
+      case 2:
+        return <Flashcards />;
+      case 3:
+        return <Quizzes />;
+      case 4:
+        return <Summary />;
+      case 5:
+        return <Chapters />;
+      case 6:
+        return <Notes />;
+      default:
+        return <div>Invalid tab</div>;
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -94,7 +113,7 @@ const ContentPage = () => {
                     key={id}
                     className={`flex-shrink-0 flex items-center justify-center
                     space-x-2 px-2 h-full rounded-md ${
-                      tab === id ? "bg-black text-white" : ""
+                      tab === id ? "bg-[#121212] text-[#fafafa]" : ""
                     } text-[#a3a3a3] hover:cursor-pointer`}
                     onClick={() => setTab(id)}
                   >
@@ -104,6 +123,7 @@ const ContentPage = () => {
                 ))}
               </div>
             </div>
+            <div>{renderComponent()}</div>
           </div>
         </div>
       </div>
