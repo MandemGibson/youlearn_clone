@@ -8,6 +8,11 @@ import {
 import { FiSend } from "react-icons/fi";
 import { RiSkipRightLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import supabase from "../../utils/supabase";
+import { useState } from "react";
+import { educationLevels, languages } from "../../entity";
+import { useAuth } from "../../hooks/useAuth";
+import { User } from "../../context api/AuthContext";
 
 const Button = ({
   text,
@@ -34,7 +39,34 @@ const Button = ({
 };
 
 const PersonalForm = () => {
+  const { setUser } = useAuth();
   const navigate = useNavigate();
+  const [values, setValues] = useState({
+    username: "",
+    eduLevel: educationLevels[0],
+    language: languages[0],
+  });
+
+  const handleUpdateUser = async () => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        data: {
+          username: values.username,
+          education_level: values.eduLevel,
+          language: values.language,
+        },
+      });
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setUser(data.user as User);
+    } catch (error) {
+      console.error("Error updating user: ", error);
+    }
+  };
   return (
     <Wrapper>
       <div
@@ -52,9 +84,13 @@ const PersonalForm = () => {
           label="Your name"
           subtext="Your preferred name"
           inputProps={{
+            autoFocus: true,
             type: "text",
             name: "username",
             id: "username",
+            value: values.username,
+            onChange: (e) =>
+              setValues((prev) => ({ ...prev, username: e.target.value })),
             placeholder: "Enter your name",
           }}
         />
@@ -67,6 +103,10 @@ const PersonalForm = () => {
           <EducationLevelDropdown
             className="py-3 w-full"
             parentWidth="w-full"
+            selectedUniversity={values.eduLevel}
+            onChange={(option) =>
+              setValues((prev) => ({ ...prev, eduLevel: option }))
+            }
           />
         </FormField>
 
@@ -79,14 +119,14 @@ const PersonalForm = () => {
             position="top"
             className="py-3 w-full"
             parentWidth="w-full"
+            selectedLang={values.language}
+            onChange={(selectedOption) => {
+              setValues((prev) => ({ ...prev, language: selectedOption }));
+            }}
           />
         </FormField>
         <div className="w-full flex flex-col gap-2">
-          <Button
-            text="Finish"
-            Icon={FiSend}
-            onClick={() => navigate("/main")}
-          />
+          <Button text="Finish" Icon={FiSend} onClick={handleUpdateUser} />
           <Button
             text="Skip"
             Icon={RiSkipRightLine}

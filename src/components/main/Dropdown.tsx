@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { IoChevronDown } from "react-icons/io5";
+import { DropdownOption } from "../../entity";
 
-export type DropdownOption = {
-  code: string;
-  name: string;
-};
+
 
 interface DropdownProps {
   options: DropdownOption[];

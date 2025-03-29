@@ -2,8 +2,8 @@ import { useState } from "react";
 import { AuthForm, Wrapper } from "../../components";
 import { useAuth } from "../../hooks/useAuth";
 import supabase from "../../utils/supabase";
-import { User } from "../../context api/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { User } from "../../entity";
 
 const SignInPage = () => {
   const navigate = useNavigate();

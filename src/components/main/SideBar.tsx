@@ -174,7 +174,7 @@ const IconAndTitle = ({
 const Dropdown = () => {
   const [open, setOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const { setUser, setIsLoading, isLoading } = useAuth();
+  const { user, setUser, setIsLoading, isLoading } = useAuth();
 
   const toggleDarkMode = () => {
     setDarkMode((prev) => !prev);
@@ -205,7 +205,7 @@ const Dropdown = () => {
         border-[#fafafa33] py-[12px] px-4 rounded-[0.75rem] hover:bg-[#fafafa0d]
         hover:cursor-pointer`}
       >
-        themaingib@gmail.com
+        {user?.email}
         <IoChevronDown
           className={`ml-1 transition-transform ${open ? "rotate-180" : ""}`}
         />

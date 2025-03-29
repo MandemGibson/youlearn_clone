@@ -1,78 +1,87 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { SigninModal, TopicCard, Wrapper } from "../../components";
 import { FaPaperclip } from "react-icons/fa6";
 import { PiWaveform } from "react-icons/pi";
 import { IoArrowForward } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa6";
 import { useAuth } from "../../hooks/useAuth";
-// import axios from "axios";
+import { useContent } from "../../hooks/useContent";
+import { useNavigate } from "react-router-dom";
 
 const topics = [
   {
     id: 1,
     title: "I Tried TikTok's Lynx - Is It Better Than React Native?",
-    thumbnail: "",
+    thumbnail: undefined,
   },
   {
     id: 2,
     title: "Mastering Tailwind CSS in 10 Minutes",
-    thumbnail: "",
+    thumbnail: undefined,
   },
   {
     id: 3,
     title: "Top 5 React Native UI Libraries You Should Know",
-    thumbnail: "",
+    thumbnail: undefined,
   },
   {
     id: 4,
     title: "Building a Chat App with Expo & Firebase",
-    thumbnail: "",
+    thumbnail: undefined,
   },
   {
     id: 5,
     title: "What’s New in React 19? A Quick Rundown",
-    thumbnail: "",
+    thumbnail: undefined,
   },
   {
     id: 6,
     title: "How I Built a Fullstack App with Next.js & Prisma",
-    thumbnail: "",
+    thumbnail: undefined,
   },
   {
     id: 7,
     title: "Understanding Async/Await in JavaScript",
-    thumbnail: "",
+    thumbnail: undefined,
   },
   {
     id: 8,
     title: "10 Productivity Tools for Developers in 2025",
-    thumbnail: "",
+    thumbnail: undefined,
   },
   {
     id: 9,
     title: "How to Use AI to Speed Up Your Coding Workflow",
-    thumbnail: "",
+    thumbnail: undefined,
   },
   {
     id: 10,
     title: "Is Expo Still Worth Using in 2025?",
-    thumbnail: "",
+    thumbnail: undefined,
   },
 ];
 
 const UploadPage = () => {
   const { user } = useAuth();
+  const { setContent } = useContent();
+
+  const navigate = useNavigate();
 
   const [openModal, setOpenModal] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  // const [spaces, setSpaces] = useState([]);
-  const [file, setFile] = useState<string | undefined>(undefined);
+  const [file, setFile] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (file !== null) {
+      setContent(file);
+      navigate("/content");
+    }
+  }, [file]);
 
   const handleUploadFile = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files ? event.target.files[0] : null;
     if (selectedFile && selectedFile.type === "application/pdf") {
       setFile(URL.createObjectURL(selectedFile));
-      alert(selectedFile.name)
     } else {
       alert("Please upload a valid PDF file.");
     }
@@ -137,7 +146,7 @@ const UploadPage = () => {
             </div>
           </div>
         </div>
-        {file && <iframe src={file} width="100%" height={500}/>}
+        {/* {file && <iframe src={file} width="100%" height={500} />} */}
 
         <div className="flex flex-col w-full space-y-3">
           <h2 className="text-[#fafafa] text-[16px]">My spaces</h2>

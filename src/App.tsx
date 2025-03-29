@@ -7,6 +7,7 @@ import {
   SignUpPage,
   UploadPage,
 } from "./pages";
+import ContentPage from "./pages/main/ContentPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/reset-password" element={<ForgotPassword />} />
         <Route path="/personal-form" element={<PersonalForm />} />
+        <Route path="/content" element={<ContentPage />} />
       </Routes>
     </Router>
   );

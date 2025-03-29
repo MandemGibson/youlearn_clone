@@ -13,11 +13,11 @@ const Wrapper: FC<WrapperProps> = ({ children }) => {
 
   const handleResize = () => {
     setIsMobile(window.innerWidth < 768);
-    if (window.innerWidth >= 768) {
-      setShowSideBar(true);
-    } else {
-      setShowSideBar(false);
-    }
+    // if (window.innerWidth >= 768) {
+    //   setShowSideBar(true);
+    // } else {
+    //   setShowSideBar(false);
+    // }
   };
 
   useEffect(() => {

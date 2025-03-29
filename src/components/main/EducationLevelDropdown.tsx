@@ -1,26 +1,19 @@
-import { useState } from "react";
-import Dropdown, { DropdownOption } from "./Dropdown";
-
-const educationLevels: DropdownOption[] = [
-  { code: "", name: "Secondary or high school" },
-  { code: "", name: "Undergraduate university" },
-  { code: "", name: "Graduate university" },
-  { code: "", name: "Post doctorate" },
-];
+import { DropdownOption, educationLevels } from "../../entity";
+import Dropdown from "./Dropdown";
 
 const UniversityDropdown = ({
   className,
   parentWidth,
   position,
+  selectedUniversity = educationLevels[0],
+  onChange,
 }: {
   className?: string;
   parentWidth: string;
+  selectedUniversity: DropdownOption;
   position?: "top" | "bottom";
+  onChange: (option: DropdownOption) => void;
 }) => {
-  const [selectedUniversity, setSelectedUniversity] = useState<DropdownOption>(
-    educationLevels[0]
-  );
-
   return (
     <Dropdown
       className={className}
@@ -28,7 +21,7 @@ const UniversityDropdown = ({
       position={position}
       options={educationLevels}
       selected={selectedUniversity}
-      onSelect={setSelectedUniversity}
+      onSelect={onChange}
     />
   );
 };

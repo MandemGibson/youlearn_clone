@@ -3,7 +3,7 @@ import { IoMdMore } from "react-icons/io";
 
 type TopicCardProps = {
   title: string;
-  thumbnail: string;
+  thumbnail: string | undefined;
 };
 
 const TopicCard: FC<TopicCardProps> = ({ title, thumbnail }) => {
