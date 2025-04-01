@@ -12,6 +12,8 @@ import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { useAuth } from "../../hooks/useAuth";
 import supabase from "../../utils/supabase";
 import { Link } from "react-router-dom";
+import { TiDeleteOutline } from "react-icons/ti";
+import RoomModal from "../RoomModal";
 
 const SideBar = ({
   isOpen,
@@ -21,6 +23,8 @@ const SideBar = ({
   onClick: () => void;
 }) => {
   const { user } = useAuth();
+
+  const [openRoomModal, setOpenRoomModal] = useState(false);
 
   return (
     <div
@@ -86,6 +90,29 @@ const SideBar = ({
                 </p>
               </div>
               <div className="flex flex-col gap-[8px] text-[14px]">
+                <h2 className="text-[#fafafa] font-semibold">Rooms</h2>
+                <div className="flex flex-col gap-[4px]">
+                  <button
+                    className="w-full p-2 flex items-center gap-2 border-2
+                  border-dashed border-[#fafafa1a] hover:bg-[#fafafa0d]
+                  hover:cursor-pointer rounded-xl"
+                    onClick={() => setOpenRoomModal(true)}
+                  >
+                    <FaPlus className="w-3 h-3" />
+                    <p className="text-[14px]">Add room</p>
+                  </button>
+                  <div
+                    className="w-full p-2 flex items-center justify-between
+                    hover:bg-[#fafafa0d] hover:cursor-pointer rounded-xl"
+                  >
+                    <div className="flex items-center gap-2">
+                      <p className="text-[14px]">My Room</p>
+                    </div>
+                    <TiDeleteOutline size={18} />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-[8px] text-[14px]">
                 <h2 className="text-[#fafafa] font-semibold">Spaces</h2>
                 <div className="flex flex-col gap-[4px]">
                   <div
@@ -146,23 +173,26 @@ const SideBar = ({
           )}
         </div>
       </aside>
+      {openRoomModal && <RoomModal onClose={() => setOpenRoomModal(false)} />}
     </div>
   );
 };
 
-const IconAndTitle = ({
+export const IconAndTitle = ({
   Icon,
   title,
   child,
+  className,
 }: {
   Icon?: IconType;
   title: string;
   child?: ReactNode;
+  className?: string;
 }) => {
   return (
     <div
-      className="flex items-center gap-2 hover:bg-[#fafafa0d] hover:cursor-pointer
-    p-2 rounded-lg"
+      className={`${className} flex items-center gap-2 hover:bg-[#fafafa0d]
+      hover:cursor-pointer p-2 rounded-lg`}
     >
       {child}
       {Icon && <Icon size={16} />}

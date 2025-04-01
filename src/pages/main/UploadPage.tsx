@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, useEffect, useState } from "react";
 import { SigninModal, TopicCard, Wrapper } from "../../components";
 import { FaPaperclip } from "react-icons/fa6";
@@ -7,6 +8,10 @@ import { FaPlus } from "react-icons/fa6";
 import { useAuth } from "../../hooks/useAuth";
 import { useContent } from "../../hooks/useContent";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { CgSpinner } from "react-icons/cg";
+import { toast } from "react-toastify";
+import { apiUrl } from "../../entity";
 
 const topics = [
   {
@@ -63,27 +68,62 @@ const topics = [
 
 const UploadPage = () => {
   const { user } = useAuth();
-  const { setContent } = useContent();
+  const { setContent, setFilename } = useContent();
 
   const navigate = useNavigate();
 
   const [openModal, setOpenModal] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [file, setFile] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (file !== null) {
       setContent(file);
       navigate("/content");
     }
-  }, [file]);
+  }, [file, navigate, setContent]);
 
-  const handleUploadFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files ? event.target.files[0] : null;
-    if (selectedFile && selectedFile.type === "application/pdf") {
+  const handleUploadFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    setIsLoading(true);
+    try {
+      const selectedFile = event.target.files ? event.target.files[0] : null;
+
+      if (!selectedFile || selectedFile.type !== "application/pdf") {
+        alert("Please upload a valid PDF file.");
+        return;
+      }
+
+      setFilename(selectedFile.name);
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const namespace = user?.id + selectedFile.name;
+
+      const response = await axios.post(
+        `${apiUrl}/v1/process/doc?namespace=${encodeURIComponent(namespace)}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (!(response.status == 200)) {
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+
+      const result = await response.data;
+      console.log("File uploaded successfully:", result);
+
       setFile(URL.createObjectURL(selectedFile));
-    } else {
-      alert("Please upload a valid PDF file.");
+    } catch (error: any) {
+      console.error("Error uploading file:", error);
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -118,7 +158,11 @@ const UploadPage = () => {
                   className="p-2 hover:bg-[#fafafa80]/20 rounded-lg transition
                 hover:cursor-pointer"
                 >
-                  <FaPaperclip size={20} />
+                  {isLoading ? (
+                    <CgSpinner className="animate-spin" />
+                  ) : (
+                    <FaPaperclip size={20} />
+                  )}
                 </label>
                 <input
                   type="file"
@@ -146,7 +190,6 @@ const UploadPage = () => {
             </div>
           </div>
         </div>
-        {/* {file && <iframe src={file} width="100%" height={500} />} */}
 
         <div className="flex flex-col w-full space-y-3">
           <h2 className="text-[#fafafa] text-[16px]">My spaces</h2>

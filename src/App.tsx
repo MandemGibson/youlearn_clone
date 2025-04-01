@@ -8,6 +8,7 @@ import {
   UploadPage,
 } from "./pages";
 import ContentPage from "./pages/main/ContentPage";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -21,6 +22,8 @@ function App() {
         <Route path="/personal-form" element={<PersonalForm />} />
         <Route path="/content" element={<ContentPage />} />
       </Routes>
+
+      <ToastContainer />
     </Router>
   );
 }

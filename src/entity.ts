@@ -22,6 +22,8 @@ type AuthContextProps = {
 };
 
 type ContentContextProps = {
+  filename: string
+  setFilename: Dispatch<SetStateAction<string>>
   content: string | null;
   setContent: Dispatch<SetStateAction<string | null>>;
   isLoading: boolean;
@@ -49,6 +51,8 @@ export const educationLevels: DropdownOption[] = [
   { code: "", name: "Post doctorate" },
 ];
 
+export const apiUrl = import.meta.env.VITE_API_URL;
+
 //contexts
 export const AuthContext = createContext<AuthContextProps>({
   user: null,
@@ -58,6 +62,8 @@ export const AuthContext = createContext<AuthContextProps>({
 });
 
 export const ContentContext = createContext<ContentContextProps>({
+  filename: "",
+  setFilename: () => { },
   content: null,
   setContent: () => { },
   isLoading: false,
