@@ -1,19 +1,19 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import { AiOutlineDiscord } from "react-icons/ai";
 import { FaRegThumbsUp } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import { FiBook, FiDollarSign } from "react-icons/fi";
 import { GoHistory } from "react-icons/go";
-import { IoIosArrowForward, IoIosMore } from "react-icons/io";
 import { IoChevronDown, IoSettingsOutline } from "react-icons/io5";
 import { LuCrown, LuLogOut } from "react-icons/lu";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { useAuth } from "../../hooks/useAuth";
 import supabase from "../../utils/supabase";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TiDeleteOutline } from "react-icons/ti";
 import RoomModal from "../RoomModal";
+import { toast } from "react-toastify";
 
 const SideBar = ({
   isOpen,
@@ -23,8 +23,59 @@ const SideBar = ({
   onClick: () => void;
 }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [openRoomModal, setOpenRoomModal] = useState(false);
+  const [isRoomLoading, setIsRoomLoading] = useState(false);
+  const [rooms, setRooms] = useState<
+    Array<{
+      name: string;
+      roomId: string;
+      userId: string;
+    }>
+  >([]);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      setIsRoomLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("room")
+          .select("*")
+          .eq("userId", user?.id);
+
+        if (error) {
+          console.log("Error fetching rooms: ", error);
+          return;
+        }
+
+        setRooms(data);
+      } catch (error) {
+        console.error("Error: ", error);
+      } finally {
+        setIsRoomLoading(false);
+      }
+    };
+    fetchRooms();
+  }, [user, navigate]);
+
+  const deleteRoom = async (roomId: string) => {
+    try {
+      const { error } = await supabase
+        .from("room")
+        .delete()
+        .eq("roomId", roomId);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      setRooms(rooms.filter((room) => room.roomId !== roomId));
+      toast.success("Room deleted successfully");
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+  };
 
   return (
     <div
@@ -101,40 +152,48 @@ const SideBar = ({
                     <FaPlus className="w-3 h-3" />
                     <p className="text-[14px]">Add room</p>
                   </button>
-                  <div
-                    className="w-full p-2 flex items-center justify-between
+                  {isRoomLoading && (
+                    <>
+                      <div
+                        className="w-full p-2 flex items-center gap-2 
+                      bg-[#fafafa1a] hover:bg-[#fafafa0d]
+                        hover:cursor-pointer rounded-xl h-9 animate-pulse"
+                        onClick={() => setOpenRoomModal(true)}
+                      />
+                      <div
+                        className="w-full p-2 flex items-center gap-2 
+                      bg-[#fafafa1a] hover:bg-[#fafafa0d]
+                        hover:cursor-pointer rounded-xl h-9 animate-pulse"
+                        onClick={() => setOpenRoomModal(true)}
+                      />
+                      <div
+                        className="w-full p-2 flex items-center gap-2 
+                  bg-[#fafafa1a] hover:bg-[#fafafa0d]
+                  hover:cursor-pointer rounded-xl h-9 animate-pulse"
+                        onClick={() => setOpenRoomModal(true)}
+                      />
+                    </>
+                  )}
+                  {!isRoomLoading &&
+                    rooms.map(({ name, roomId }) => (
+                      <div
+                        key={roomId}
+                        className="w-full p-2 flex items-center justify-between
                     hover:bg-[#fafafa0d] hover:cursor-pointer rounded-xl"
-                  >
-                    <div className="flex items-center gap-2">
-                      <p className="text-[14px]">My Room</p>
-                    </div>
-                    <TiDeleteOutline size={18} />
-                  </div>
+                        onClick={() => navigate(`/room/${roomId}`)}
+                      >
+                        <div className="flex items-center gap-2">
+                          <p className="text-[14px]">{name}</p>
+                        </div>
+                        <TiDeleteOutline
+                          size={18}
+                          onClick={() => deleteRoom(roomId)}
+                        />
+                      </div>
+                    ))}
                 </div>
               </div>
-              <div className="flex flex-col gap-[8px] text-[14px]">
-                <h2 className="text-[#fafafa] font-semibold">Spaces</h2>
-                <div className="flex flex-col gap-[4px]">
-                  <div
-                    className="w-full p-2 flex items-center gap-2 border-2
-                  border-dashed border-[#fafafa1a] hover:bg-[#fafafa0d]
-                  hover:cursor-pointer rounded-xl"
-                  >
-                    <FaPlus className="w-3 h-3" />
-                    <p className="text-[14px]">Add space</p>
-                  </div>
-                  <div
-                    className="w-full p-2 flex items-center justify-between
-                    hover:bg-[#fafafa0d] hover:cursor-pointer rounded-xl"
-                  >
-                    <div className="flex items-center gap-2">
-                      <IoIosArrowForward />
-                      <p className="text-[14px]">Philip's Space</p>
-                    </div>
-                    <IoIosMore />
-                  </div>
-                </div>
-              </div>
+
               <div className="text-[14px] flex flex-col gap-[14px]">
                 <h2 className="text-[#fafafa] font-semibold">Help & Tools</h2>
                 <IconAndTitle Icon={FaRegThumbsUp} title="Feedback" />
