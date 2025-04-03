@@ -1,5 +1,5 @@
 import { BiArrowBack, BiCopy } from "react-icons/bi";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useRoom } from "../../hooks/useRoom";
 import { Chat } from "../../components";
 import { useState, useEffect, useRef } from "react";
@@ -9,6 +9,7 @@ import { CiVideoOn, CiVideoOff } from "react-icons/ci";
 const Room = () => {
   const { id } = useParams();
   const { rooms } = useRoom();
+  const navigate = useNavigate();
 
   const [file, setFile] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
@@ -40,7 +41,7 @@ const Room = () => {
     return () => {
       stream?.getTracks().forEach((track) => track.stop());
     };
-  }, [stream]);
+  }, []);
 
   const handleToggleMute = () => {
     if (stream) {
@@ -51,8 +52,10 @@ const Room = () => {
 
   const handleToggleVideo = () => {
     if (stream) {
-      stream.getVideoTracks().forEach((track) => (track.enabled = !videoOn));
-      setVideoOn(!videoOn);
+      stream.getVideoTracks().forEach((track) => {
+        track.enabled = !track.enabled;
+      });
+      setVideoOn((prev) => !prev);
     }
   };
 
@@ -67,10 +70,19 @@ const Room = () => {
     }
   };
 
+  const handleCloseRoom = () => {
+    navigate("/main");
+  };
+
   return (
     <main className="h-screen max-h-screen overflow-hidden bg-[#121212] flex flex-col">
       <div className="flex relative items-center justify-between p-3">
-        <button className="flex items-center justify-center p-2 px-5 space-x-3 rounded-lg border border-[#a3a3a3] text-[#fafafa] hover:cursor-pointer hover:bg-[#fafafa0d]">
+        <button
+          onClick={handleCloseRoom}
+          className="flex items-center justify-center p-2 px-5 space-x-3
+           rounded-lg border border-[#a3a3a3] text-[#fafafa]
+            hover:cursor-pointer hover:bg-[#fafafa0d]"
+        >
           <BiArrowBack />
           <span>Close Room</span>
         </button>
@@ -79,7 +91,9 @@ const Room = () => {
         </p>
         <button
           onClick={handleCopyRoomID}
-          className="flex items-center justify-center p-2 px-5 space-x-3 rounded-lg border border-[#a3a3a3] text-[#fafafa] hover:cursor-pointer hover:bg-[#fafafa0d]"
+          className="flex items-center justify-center p-2 px-5 space-x-3 
+          rounded-lg border border-[#a3a3a3] text-[#fafafa] hover:cursor-pointer
+           hover:bg-[#fafafa0d]"
         >
           <span>{isCopied ? "Copied!" : "Copy Room ID"}</span>
           <BiCopy />
