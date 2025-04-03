@@ -12,6 +12,12 @@ export type User = {
   password?: string;
 };
 
+export type Room = {
+  roomId: string
+  name: string
+  userId: string
+}
+
 
 //context props
 type AuthContextProps = {
@@ -26,6 +32,13 @@ type ContentContextProps = {
   setFilename: Dispatch<SetStateAction<string>>
   content: string | null;
   setContent: Dispatch<SetStateAction<string | null>>;
+  isLoading: boolean;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+}
+
+type RoomsContextProps = {
+  rooms: Room[]
+  setRooms: Dispatch<SetStateAction<Room[]>>
   isLoading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
@@ -68,4 +81,11 @@ export const ContentContext = createContext<ContentContextProps>({
   setContent: () => { },
   isLoading: false,
   setIsLoading: () => { }
+})
+
+export const RoomsContext = createContext<RoomsContextProps>({
+  rooms: [],
+  setRooms: () => { },
+  isLoading: false,
+  setIsLoading: () => { },
 })

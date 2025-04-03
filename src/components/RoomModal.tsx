@@ -3,6 +3,8 @@ import { IoIosClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import supabase from "../utils/supabase";
 import { useAuth } from "../hooks/useAuth";
+import { useRoom } from "../hooks/useRoom";
+import { toast } from "react-toastify";
 
 type RoomModalProps = {
   onClose: () => void;
@@ -11,6 +13,11 @@ type RoomModalProps = {
 const RoomModal: React.FC<RoomModalProps> = ({ onClose }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { rooms } = useRoom();
+  const [isLoading, setIsLoading] = useState({
+    creating: false,
+    joining: false,
+  });
   const [roomName, setRoomName] = useState("");
   const [roomId, setRoomId] = useState("");
 
@@ -22,18 +29,38 @@ const RoomModal: React.FC<RoomModalProps> = ({ onClose }) => {
     e.preventDefault();
     const id = generateRoomId();
 
-    const { data, error } = await supabase
-      .from("room")
-      .insert([{ roomId: id, name: roomName, userId: user?.id }]);
+    setIsLoading((prev) => ({ ...prev, creating: true }));
+    try {
+      const { data, error } = await supabase
+        .from("room")
+        .insert([{ roomId: id, name: roomName, userId: user?.id }]);
 
-    if (error) {
+      if (error) {
+        console.error("Error creating room:", error);
+        return;
+      }
+      console.log(data);
+
+      navigate(`/room/${id}`);
+    } catch (error) {
       console.error("Error creating room:", error);
-      return;
+    } finally {
+      setIsLoading((prev) => ({ ...prev, creating: false }));
     }
-    console.log(data);
-    
+  };
 
-    navigate(`/room/${id}`);
+  const handleJoinRoom = () => {
+    setIsLoading((prev) => ({ ...prev, joining: true }));
+    try {
+      const roomExist = rooms.some((room) => room.roomId === roomId);
+      if (roomExist) navigate(`/room/${roomId}`);
+      else
+        toast.warn("Room does not exist. Create a new room or enter a new ID");
+    } catch (error) {
+      console.error("Error joining room: ", error);
+    } finally {
+      setIsLoading((prev) => ({ ...prev, joining: false }));
+    }
   };
 
   return (
@@ -68,9 +95,10 @@ const RoomModal: React.FC<RoomModalProps> = ({ onClose }) => {
             />
             <button
               type="submit"
-              className="w-full px-4 py-2 bg-[#262626] text-[#fafafa] rounded-md"
+              className="w-full px-4 py-2 bg-[#262626] text-[#fafafa] rounded-md
+              hover:cursor-pointer"
             >
-              Create Room
+              {isLoading.creating ? "Creating..." : "Create Room"}
             </button>
           </form>
         </div>
@@ -82,7 +110,7 @@ const RoomModal: React.FC<RoomModalProps> = ({ onClose }) => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (roomId) navigate(`/room/${roomId}`);
+              handleJoinRoom();
             }}
             className="flex space-x-2"
           >
@@ -96,7 +124,8 @@ const RoomModal: React.FC<RoomModalProps> = ({ onClose }) => {
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-[#262626] text-[#fafafa] rounded-md"
+              className="px-4 py-2 bg-[#262626] text-[#fafafa] rounded-md
+              hover:cursor-pointer"
             >
               Join
             </button>

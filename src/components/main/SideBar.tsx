@@ -14,6 +14,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { TiDeleteOutline } from "react-icons/ti";
 import RoomModal from "../RoomModal";
 import { toast } from "react-toastify";
+import { useRoom } from "../../hooks/useRoom";
+import { Room } from "../../entity";
 
 const SideBar = ({
   isOpen,
@@ -23,41 +25,17 @@ const SideBar = ({
   onClick: () => void;
 }) => {
   const { user } = useAuth();
+  const { rooms, isLoading } = useRoom();
   const navigate = useNavigate();
 
   const [openRoomModal, setOpenRoomModal] = useState(false);
-  const [isRoomLoading, setIsRoomLoading] = useState(false);
-  const [rooms, setRooms] = useState<
-    Array<{
-      name: string;
-      roomId: string;
-      userId: string;
-    }>
-  >([]);
+  const [myRooms, setMyRooms] = useState<Room[]>([]);
 
   useEffect(() => {
-    const fetchRooms = async () => {
-      setIsRoomLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from("room")
-          .select("*")
-          .eq("userId", user?.id);
-
-        if (error) {
-          console.log("Error fetching rooms: ", error);
-          return;
-        }
-
-        setRooms(data);
-      } catch (error) {
-        console.error("Error: ", error);
-      } finally {
-        setIsRoomLoading(false);
-      }
-    };
-    fetchRooms();
-  }, [user, navigate]);
+    setMyRooms(
+      isLoading ? [] : rooms.filter((room) => room.userId === user?.id)
+    );
+  }, [rooms, user, isLoading]);
 
   const deleteRoom = async (roomId: string) => {
     try {
@@ -70,7 +48,7 @@ const SideBar = ({
         toast.error(error.message);
         return;
       }
-      setRooms(rooms.filter((room) => room.roomId !== roomId));
+      setMyRooms(myRooms.filter((room) => room.roomId !== roomId));
       toast.success("Room deleted successfully");
     } catch (error) {
       console.error("Error: ", error);
@@ -152,7 +130,7 @@ const SideBar = ({
                     <FaPlus className="w-3 h-3" />
                     <p className="text-[14px]">Add room</p>
                   </button>
-                  {isRoomLoading && (
+                  {isLoading && (
                     <>
                       <div
                         className="w-full p-2 flex items-center gap-2 
@@ -174,8 +152,8 @@ const SideBar = ({
                       />
                     </>
                   )}
-                  {!isRoomLoading &&
-                    rooms.map(({ name, roomId }) => (
+                  {!isLoading &&
+                    myRooms.map(({ name, roomId }) => (
                       <div
                         key={roomId}
                         className="w-full p-2 flex items-center justify-between

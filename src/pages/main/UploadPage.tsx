@@ -13,59 +13,6 @@ import { CgSpinner } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { apiUrl } from "../../entity";
 
-const topics = [
-  {
-    id: 1,
-    title: "I Tried TikTok's Lynx - Is It Better Than React Native?",
-    thumbnail: undefined,
-  },
-  {
-    id: 2,
-    title: "Mastering Tailwind CSS in 10 Minutes",
-    thumbnail: undefined,
-  },
-  {
-    id: 3,
-    title: "Top 5 React Native UI Libraries You Should Know",
-    thumbnail: undefined,
-  },
-  {
-    id: 4,
-    title: "Building a Chat App with Expo & Firebase",
-    thumbnail: undefined,
-  },
-  {
-    id: 5,
-    title: "What’s New in React 19? A Quick Rundown",
-    thumbnail: undefined,
-  },
-  {
-    id: 6,
-    title: "How I Built a Fullstack App with Next.js & Prisma",
-    thumbnail: undefined,
-  },
-  {
-    id: 7,
-    title: "Understanding Async/Await in JavaScript",
-    thumbnail: undefined,
-  },
-  {
-    id: 8,
-    title: "10 Productivity Tools for Developers in 2025",
-    thumbnail: undefined,
-  },
-  {
-    id: 9,
-    title: "How to Use AI to Speed Up Your Coding Workflow",
-    thumbnail: undefined,
-  },
-  {
-    id: 10,
-    title: "Is Expo Still Worth Using in 2025?",
-    thumbnail: undefined,
-  },
-];
-
 const UploadPage = () => {
   const { user } = useAuth();
   const { setContent, setFilename } = useContent();
@@ -76,13 +23,41 @@ const UploadPage = () => {
   const [inputValue, setInputValue] = useState("");
   const [file, setFile] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [topics, setTopics] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchYTVideos = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/youtube-videos"
+        );
+
+        const data = response.data;
+        console.log(data);
+
+        if (response.status === 200) {
+          const videoData = response.data.items.map((video: any) => ({
+            title: video.snippet.title,
+            thumbnail: video.snippet.thumbnails.high.url,
+          }));
+          setTopics(videoData);
+        } else {
+          toast.error("Failed to fetch videos");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchYTVideos();
+  }, []);
 
   useEffect(() => {
     if (file !== null) {
       setContent(file);
       navigate("/content");
     }
-  }, [file, navigate, setContent]);
+  }, [file, user, navigate, setContent]);
 
   const handleUploadFile = async (event: ChangeEvent<HTMLInputElement>) => {
     setIsLoading(true);
@@ -91,6 +66,11 @@ const UploadPage = () => {
 
       if (!selectedFile || selectedFile.type !== "application/pdf") {
         alert("Please upload a valid PDF file.");
+        return;
+      }
+
+      if (!user) {
+        setOpenModal(true);
         return;
       }
 
