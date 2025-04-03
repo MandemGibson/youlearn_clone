@@ -27,20 +27,24 @@ const MainNav = ({ onClick }: { onClick: () => void }) => {
           <IoMenu
             size={24}
             color="white"
-            className="ml-[10px]"
+            className="ml-[10px] hover:cursor-pointer"
             onClick={onClick}
           />
-          <h2 className="text-xl text-white">uLearn</h2>
+          <h2 className="text-xl text-white">weLearn</h2>
         </div>
         <IoMenu
           size={24}
           color="white"
-          className="ml-[10px] md:hidden"
+          className="ml-[10px] md:hidden hover:cursor-pointer"
           onClick={onClick}
         />
         {!user ? (
           <div className="flex space-x-2">
-            {!isAuthPage && <LanguageDropdown />}
+            {!isAuthPage && (
+              <LanguageDropdown
+                onChange={() => console.log("Language changed")}
+              />
+            )}
             <Link
               to="/login"
               className="py-2 px-4 rounded-[0.75rem] bg-[#fafafa]

@@ -12,12 +12,7 @@ const Wrapper: FC<WrapperProps> = ({ children }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const handleResize = () => {
-    setIsMobile(window.innerWidth < 768);
-    // if (window.innerWidth >= 768) {
-    //   setShowSideBar(true);
-    // } else {
-    //   setShowSideBar(false);
-    // }
+    setIsMobile(window.innerWidth < 768)
   };
 
   useEffect(() => {

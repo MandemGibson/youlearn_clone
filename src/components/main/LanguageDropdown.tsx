@@ -11,7 +11,7 @@ const LanguageDropdown = ({
   className?: string;
   parentWidth?: string;
   position?: "top" | "bottom";
-  selectedLang: DropdownOption;
+  selectedLang?: DropdownOption;
   onChange: (option: DropdownOption) => void;
 }) => {
   return (

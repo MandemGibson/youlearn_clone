@@ -74,7 +74,7 @@ const AuthForm: FC<AuthFormProps> = ({
   return (
     <div className="flex flex-col items-center justify-center w-full min-h-screen px-1 space-y-5">
       <h1 className="text-[20px] text-white font-semibold">
-        U<span className="relative -bottom-2">L</span>
+        W<span className="relative -bottom-2">L</span>
       </h1>
       <form
         onSubmit={handleSubmit}
