@@ -43,6 +43,21 @@ const Room = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (stream) {
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        // Enable or disable the video track based on `videoOn` state
+        videoTrack.enabled = videoOn;
+
+        // Reassign the srcObject to ensure the video plays when enabled
+        if (videoRef.current && videoTrack.enabled) {
+          videoRef.current.srcObject = stream;
+        }
+      }
+    }
+  }, [videoOn, stream]);
+
   const handleToggleMute = () => {
     if (stream) {
       stream.getAudioTracks().forEach((track) => (track.enabled = isMuted));
@@ -51,12 +66,7 @@ const Room = () => {
   };
 
   const handleToggleVideo = () => {
-    if (stream) {
-      stream.getVideoTracks().forEach((track) => {
-        track.enabled = !track.enabled;
-      });
-      setVideoOn((prev) => !prev);
-    }
+    setVideoOn((prev) => !prev);
   };
 
   const handleCopyRoomID = () => {
@@ -76,12 +86,12 @@ const Room = () => {
 
   return (
     <main className="h-screen max-h-screen overflow-hidden bg-[#121212] flex flex-col">
-      <div className="flex relative items-center justify-between p-3">
+      <div className="flex z-20 relative items-center justify-between p-3">
         <button
           onClick={handleCloseRoom}
           className="flex items-center justify-center p-2 px-5 space-x-3
            rounded-lg border border-[#a3a3a3] text-[#fafafa]
-            hover:cursor-pointer hover:bg-[#fafafa0d]"
+            hover:cursor-pointer hover:bg-[#fafafa0d] bg-[#121212]"
         >
           <BiArrowBack />
           <span>Close Room</span>
@@ -93,7 +103,7 @@ const Room = () => {
           onClick={handleCopyRoomID}
           className="flex items-center justify-center p-2 px-5 space-x-3 
           rounded-lg border border-[#a3a3a3] text-[#fafafa] hover:cursor-pointer
-           hover:bg-[#fafafa0d]"
+           hover:bg-[#fafafa0d] bg-[#121212]"
         >
           <span>{isCopied ? "Copied!" : "Copy Room ID"}</span>
           <BiCopy />
@@ -131,8 +141,12 @@ const Room = () => {
         </div>
 
         {/* User Video */}
-        <div className="flex-1 grid grid-cols-1 h-full p-5 gap-5">
-          <div className="relative rounded-xl border border-[#fafafa1a] bg-[#fafafa0d] flex items-center justify-center overflow-hidden group">
+        <div className="absolute top-0 z-0 min-w-[210px] h-50 md:static flex-1 grid grid-cols-1
+         md:h-full p-5 gap-5">
+          <div
+            className="relative rounded-xl border border-[#fafafa1a] bg-[#1e1e1e] flex items-center
+           justify-center overflow-hidden group"
+          >
             {videoOn ? (
               <video
                 ref={videoRef}
@@ -142,8 +156,16 @@ const Room = () => {
                 muted
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-black text-white text-lg">
-                Video Off
+              <div
+                className="flex flex-col items-center space-y-3 w-full h-full
+              justify-center"
+              >
+                <div
+                  className="w-15 h-15 rounded-full bg-white
+                  text-center flex items-center justify-center"
+                >
+                  MG
+                </div>
               </div>
             )}
 

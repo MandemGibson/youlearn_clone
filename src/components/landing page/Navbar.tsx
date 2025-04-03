@@ -29,7 +29,7 @@ const Navbar = () => {
             onClick={toggleMenu}
           />
         )}
-        <div className="text-xl font-bold">uLearn</div>
+        <div className="text-xl font-bold">weLearn</div>
         {/* <img src="" alt="Logo" /> */}
         {!isOpen && <IoMenu className="text-2xl" onClick={toggleMenu} />}
 

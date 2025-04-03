@@ -1,7 +1,6 @@
 import {
   Hero,
   Navbar,
-  Brands,
   Guide,
   UseCase,
   Pricing,
@@ -15,7 +14,6 @@ const LandingPage = () => {
     <main className="relative">
       <Navbar />
       <Hero />
-      <Brands />
       <Guide />
       <UseCase />
       <Pricing />
