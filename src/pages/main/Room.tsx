@@ -81,6 +81,7 @@ const Room = () => {
   };
 
   const handleCloseRoom = () => {
+    setStream(null);
     navigate("/main");
   };
 
@@ -141,8 +142,10 @@ const Room = () => {
         </div>
 
         {/* User Video */}
-        <div className="absolute top-0 z-0 min-w-[210px] h-50 md:static flex-1 grid grid-cols-1
-         md:h-full p-5 gap-5">
+        <div
+          className="absolute top-0 z-0 min-w-[210px] h-50 md:static flex-1 grid grid-cols-1
+         md:h-full p-5 gap-5"
+        >
           <div
             className="relative rounded-xl border border-[#fafafa1a] bg-[#1e1e1e] flex items-center
            justify-center overflow-hidden group"

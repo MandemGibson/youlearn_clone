@@ -62,7 +62,7 @@ const Navbar = () => {
       {/*Desktop menu*/}
       <div className="hidden md:flex justify-between items-center">
         <div className="flex items-center gap-[26px]">
-          <div className="text-xl font-bold">uLearn</div>
+          <div className="text-xl font-bold">weLearn</div>
           {/* <img src="" alt="Logo" /> */}
           <ul className="flex gap-[16px]">
             {navItems.map(({ id, link, name }) => (

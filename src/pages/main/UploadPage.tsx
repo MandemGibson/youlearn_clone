@@ -23,10 +23,12 @@ const UploadPage = () => {
   const [inputValue, setInputValue] = useState("");
   const [file, setFile] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
   const [topics, setTopics] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchYTVideos = async () => {
+      setIsFetching(true);
       try {
         const response = await axios.get(
           "http://localhost:5000/api/youtube-videos"
@@ -46,6 +48,8 @@ const UploadPage = () => {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsFetching(false);
       }
     };
 
@@ -196,9 +200,16 @@ const UploadPage = () => {
                 "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 5%, rgba(0,0,0,1) 95%, rgba(0,0,0,0) 100%)",
             }}
           >
-            {topics.map(({ id, ...rest }) => (
-              <TopicCard key={id} {...rest} />
-            ))}
+            {isFetching &&
+              [...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="w-[calc(72%-13px)] max-w-[250px] p-[6px] border border-[#fafafa1a]
+                    bg-[#17171766] rounded-xl sm:min-h-[250px] min-h-[200px] md:min-w-[300px] animate-pulse"
+                ></div>
+              ))}
+            {!isFetching &&
+              topics.map(({ id, ...rest }) => <TopicCard key={id} {...rest} />)}
           </div>
         </div>
       </div>
