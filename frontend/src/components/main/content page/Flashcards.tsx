@@ -32,12 +32,11 @@ const Flashcards = () => {
 
   const namespace = user?.id + filename;
 
-  // Auto-generate flashcards when content is available
   useEffect(() => {
-    if (filename && user?.id) {
+    if (filename && user?.id && flashcards.length === 0) {
       generateFlashcards();
     }
-  }, [filename, user?.id]);
+  }, [filename, user?.id, flashcards.length]);
 
   const generateFlashcards = async () => {
     if (!filename || !user?.id) return;
@@ -266,16 +265,16 @@ const Flashcards = () => {
           {/* Single Card View */}
           <div className="flex-1 flex items-center justify-center">
             <div
-              className="relative w-full max-w-2xl h-80 cursor-pointer"
+              className="flip-card-container relative w-full max-w-2xl h-80 cursor-pointer"
               onClick={flipCard}
             >
               <div
-                className={`absolute inset-0 w-full h-full transition-transform duration-500 transform-style-preserve-3d ${
-                  isFlipped ? "rotate-y-180" : ""
+                className={`flip-card absolute inset-0 w-full h-full ${
+                  isFlipped ? "flipped" : ""
                 }`}
               >
                 {/* Front of card (Question) */}
-                <div className="absolute inset-0 w-full h-full backface-hidden bg-[#fafafa1a] border border-[#fafafa20] rounded-xl p-8 flex flex-col justify-center items-center">
+                <div className="flip-card-face absolute inset-0 w-full h-full bg-[#fafafa1a] border border-[#fafafa20] rounded-xl p-8 flex flex-col justify-center items-center">
                   <div className="text-sm text-[#fafafa60] mb-4">QUESTION</div>
                   <div className="text-xl text-center leading-relaxed">
                     {flashcards[currentIndex]?.question}
@@ -286,7 +285,7 @@ const Flashcards = () => {
                 </div>
 
                 {/* Back of card (Answer) */}
-                <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-[#fafafa1a] border border-[#fafafa20] rounded-xl p-8 flex flex-col justify-center items-center">
+                <div className="flip-card-face flip-card-back absolute inset-0 w-full h-full bg-[#fafafa1a] border border-[#fafafa20] rounded-xl p-8 flex flex-col justify-center items-center">
                   <div className="text-sm text-[#fafafa60] mb-4">ANSWER</div>
                   <div className="text-lg text-center leading-relaxed">
                     {flashcards[currentIndex]?.answer}

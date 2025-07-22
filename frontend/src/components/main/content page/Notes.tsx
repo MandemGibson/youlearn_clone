@@ -448,7 +448,11 @@ const Notes = () => {
             onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
             className="bg-[#fafafa20] hover:bg-[#fafafa30] p-2 rounded-lg transition-colors"
           >
-            {viewMode === "grid" ? <IoList size={18} /> : <IoGrid size={18} />}
+            {viewMode === "grid" ? (
+              <IoList title="List View" size={18} />
+            ) : (
+              <IoGrid title="Grid View" size={18} />
+            )}
           </button>
           <button
             onClick={() => setIsCreating(true)}
@@ -541,7 +545,7 @@ const Notes = () => {
 
       {/* Create Note Modal */}
       {isCreating && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[#1a1a1a] rounded-lg p-6 w-full max-w-2xl mx-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Create New Note</h2>
