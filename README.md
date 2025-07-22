@@ -1,54 +1,83 @@
-# React + TypeScript + Vite
+# YouLearn Clone
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a platform for learning through video content. It is built with React, TypeScript, and Vite, and utilizes Supabase for the backend.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **User Authentication:** Sign up, sign in, and password recovery.
+- **Video Upload:** Upload videos for processing and learning.
+- **Content Generation:** Automatically generate summaries, chapters, quizzes, and flashcards from video content.
+- **Interactive Learning:** Engage with the content through a chat interface, notes, and quizzes.
+- **Personalized Experience:** Tailor the learning experience with personal forms and different education levels.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend:**
+  - React
+  - TypeScript
+  - Vite
+  - Tailwind CSS
+  - React Router
+  - Axios
+- **Backend:**
+  - Supabase
+- **Linting and Formatting:**
+  - ESLint
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Getting Started
+
+To get a local copy up and running, follow these simple steps.
+
+### Prerequisites
+
+- Node.js
+- npm
+
+### Installation
+
+1.  Clone the repo
+    ```sh
+    git clone https://github.com/your_username/youlearn_clone.git
+    ```
+2.  Install NPM packages
+    ```sh
+    npm install
+    ```
+3.  Set up your Supabase environment variables in a `.env` file.
+
+## Available Scripts
+
+In the project directory, you can run:
+
+- `npm run dev`: Runs the app in the development mode.
+- `npm run build`: Builds the app for production.
+- `npm run lint`: Lints the code.
+- `npm run preview`: Previews the production build.
+
+## Project Structure
+
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+.
+├── backend
+│   └── server.js
+├── public
+│   └── vite.svg
+├── src
+│   ├── assets
+│   ├── components
+│   │   ├── auth
+│   │   ├── landing page
+│   │   └── main
+│   ├── context api
+│   ├── hooks
+│   ├── pages
+│   │   ├── auth
+│   │   ├── landing page
+│   │   └── main
+│   ├── providers
+│   └── utils
+├── .gitignore
+├── index.html
+├── package.json
+└── vite.config.ts
 ```

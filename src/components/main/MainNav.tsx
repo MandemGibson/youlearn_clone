@@ -30,7 +30,9 @@ const MainNav = ({ onClick }: { onClick: () => void }) => {
             className="ml-[10px] hover:cursor-pointer"
             onClick={onClick}
           />
-          <h2 className="text-xl text-white">weLearn</h2>
+          <Link to={"/main"} className="text-xl text-white font-serif">
+            AceMate
+          </Link>
         </div>
         <IoMenu
           size={24}

@@ -70,7 +70,7 @@ const SideBar = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 px-3">
-          <h2 className="text-xl">weLearn</h2>
+          <h2 className="text-xl">AceMate</h2>
           <MdKeyboardDoubleArrowLeft
             size={20}
             className="hover:cursor-pointer"
@@ -93,7 +93,7 @@ const SideBar = ({
               py-1 text-[14px]"
             >
               <h1 className="text-[#fafafa] text-[16px] font-medium">
-                Welcome to weLearn
+                Welcome to AceMate
               </h1>
               <h3>An AI tutor personalized to you.</h3>
               <p>
@@ -165,7 +165,10 @@ const SideBar = ({
                         </div>
                         <TiDeleteOutline
                           size={18}
-                          onClick={() => deleteRoom(roomId)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteRoom(roomId);
+                          }}
                         />
                       </div>
                     ))}

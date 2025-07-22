@@ -33,8 +33,8 @@ const tabOptions: TabOption[] = [
   { id: 6, title: "Notes", Icon: PiNoteDuotone },
 ];
 
-const MIN_IFRAME_WIDTH = 30; // Minimum width percentage
-const MAX_IFRAME_WIDTH = 70; // Maximum width percentage
+const MIN_IFRAME_WIDTH = 30;
+const MAX_IFRAME_WIDTH = 70;
 
 const ContentPage: React.FC = () => {
   const { content } = useContent();
@@ -161,10 +161,17 @@ const ContentPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    console.log("hideFile changed:", hideFile);
+  }, [hideFile]);
+
   const toggleFileContainerDisplay = () => {
-    setHideFile(!hideFile);
-    if (iframeContainerRef.current)
-      iframeContainerRef.current.style.display = hideFile ? "none" : "block";
+    setHideFile((prev) => {
+      const newValue = !prev;
+      if (iframeContainerRef.current)
+        iframeContainerRef.current.style.display = newValue ? "none" : "block";
+      return newValue;
+    });
   };
 
   if (!content) return <p>Loading...</p>;
@@ -176,7 +183,7 @@ const ContentPage: React.FC = () => {
 
         <div
           className="flex-1 md:p-[20px] w-full flex flex-col md:flex-row
-        md:space-x-[20px] pt-0 overflow-hidden"
+          md:space-x-[20px] pt-0 overflow-hidden"
           ref={resizeRef}
         >
           {/* iFrame Container */}
@@ -197,10 +204,10 @@ const ContentPage: React.FC = () => {
           </div>
 
           {/* Resizable Divider */}
-          {hideFile && (
+          {!hideFile && (
             <div
               className="hidden md:flex h-full relative border-l cursor-ew-resize
-          items-center justify-center border-[#fafafa1a]"
+              items-center justify-center border-[#fafafa1a]"
               onMouseDown={startResizing}
             >
               <div className="absolute" ref={dragHandleRef}>
@@ -215,7 +222,7 @@ const ContentPage: React.FC = () => {
           {/* AI Conversation Panel */}
           <div
             className="flex flex-col flex-1 md:max-h-full
-          overflow-hidden transition"
+            overflow-hidden transition"
             style={{
               width: windowWidth > 768 ? `${100 - iframeWidth}%` : "100%",
             }}
@@ -226,7 +233,7 @@ const ContentPage: React.FC = () => {
               justify-center"
                 onClick={toggleFileContainerDisplay}
               >
-                {hideFile ? (
+                {!hideFile ? (
                   <BsChevronBarLeft color="#a3a3a3" size={18} />
                 ) : (
                   <BsChevronBarRight color="#a3a3a3" size={18} />
@@ -257,7 +264,7 @@ const ContentPage: React.FC = () => {
                 justify-center flex"
                 onClick={toggleFileContainerDisplay}
               >
-                {hideFile ? (
+                {!hideFile ? (
                   <FaChevronUp color="#a3a3a3" size={16} />
                 ) : (
                   <FaChevronDown color="#a3a3a3" size={16} />

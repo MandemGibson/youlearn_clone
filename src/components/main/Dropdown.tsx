@@ -3,15 +3,13 @@ import { FaCheck } from "react-icons/fa6";
 import { IoChevronDown } from "react-icons/io5";
 import { DropdownOption } from "../../entity";
 
-
-
 interface DropdownProps {
   options: DropdownOption[];
   selected: DropdownOption;
   onSelect: (option: DropdownOption) => void;
   className?: string;
   parentWidth?: string;
-  position?: "top" | "bottom" 
+  position?: "top" | "bottom";
 }
 
 const Dropdown = ({
@@ -20,7 +18,7 @@ const Dropdown = ({
   onSelect,
   className,
   parentWidth,
-  position="bottom"
+  position = "bottom",
 }: DropdownProps) => {
   const positionClasses = {
     top: "bottom-full left-1/2 -translate-x-1/2 mb-2",

@@ -105,7 +105,7 @@ const UploadPage = () => {
       setFile(URL.createObjectURL(selectedFile));
     } catch (error: any) {
       console.error("Error uploading file:", error);
-      toast.error(error.message);
+      toast.error("Could not upload file. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -117,7 +117,7 @@ const UploadPage = () => {
         className="w-full min-h-screen flex flex-col px-6 
          items-center justify-center overflow-y-auto gap-[40px]
          sm:px-[62px] md:px-[168px] relative p-[100px]
-         transition-all duration-300 ease-in"
+         transition-all duration-300 ease-in max-w-[1200px] mx-auto"
       >
         <div className="flex flex-col items-center w-full gap-6">
           <h1 className="text-[#fafafa] text-[20px] sm:text-[32px]">
