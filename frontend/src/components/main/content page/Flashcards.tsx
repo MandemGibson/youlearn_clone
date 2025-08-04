@@ -13,17 +13,18 @@ import { useContent } from "../../../hooks/useContent";
 import { useAuth } from "../../../hooks/useAuth";
 import axios from "axios";
 import { apiUrl } from "../../../entity";
-
-interface Flashcard {
-  id: number;
-  question: string;
-  answer: string;
-}
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectFlashCards,
+  setFlashCards,
+} from "../../../redux/slices/flashcardSlice";
 
 const Flashcards = () => {
+  const dispatch = useDispatch();
+  const flashcards = useSelector(selectFlashCards);
+
   const { user } = useAuth();
   const { filename } = useContent();
-  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -61,7 +62,6 @@ const Flashcards = () => {
       // Parse the response to extract flashcards
       let flashcardsData = [];
       try {
-        // Try to parse as JSON first
         const cleanResponse = response.data.detail
           .replace(/```json|```/g, "")
           .trim();
@@ -81,7 +81,7 @@ const Flashcards = () => {
           question: card.question || card.Q || card.front || "",
           answer: card.answer || card.A || card.back || "",
         }));
-        setFlashcards(formattedFlashcards);
+        dispatch(setFlashCards(formattedFlashcards));
         setCurrentIndex(0);
         setIsFlipped(false);
       } else {
@@ -150,7 +150,7 @@ const Flashcards = () => {
 
   const shuffleCards = () => {
     const shuffled = [...flashcards].sort(() => Math.random() - 0.5);
-    setFlashcards(shuffled);
+    dispatch(setFlashCards(shuffled));
     setCurrentIndex(0);
     setIsFlipped(false);
   };
