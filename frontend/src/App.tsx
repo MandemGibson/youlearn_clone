@@ -3,6 +3,7 @@ import {
   ForgotPassword,
   LandingPage,
   PersonalForm,
+  ResetPassword,
   SignInPage,
   SignUpPage,
   UploadPage,
@@ -19,7 +20,8 @@ function App() {
         <Route path="/main" element={<UploadPage />} />
         <Route path="/login" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/reset-password" element={<ForgotPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/personal-form" element={<PersonalForm />} />
         <Route path="/content" element={<ContentPage />} />
         <Route path="/room/:id" element={<Room />} />

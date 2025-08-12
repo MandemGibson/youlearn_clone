@@ -12,16 +12,18 @@ import { BiShuffle } from "react-icons/bi";
 import { useContent } from "../../../hooks/useContent";
 import { useAuth } from "../../../hooks/useAuth";
 import axios from "axios";
-import { apiUrl } from "../../../entity";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectFlashCards,
+  selectGeneratedForNamespace,
   setFlashCards,
+  setGeneratedForNamespace,
 } from "../../../redux/slices/flashcardSlice";
 
 const Flashcards = () => {
   const dispatch = useDispatch();
   const flashcards = useSelector(selectFlashCards);
+  const generatedForNamespace = useSelector(selectGeneratedForNamespace);
 
   const { user } = useAuth();
   const { filename } = useContent();
@@ -31,13 +33,19 @@ const Flashcards = () => {
   const [error, setError] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
 
-  const namespace = user?.id + filename;
+  const namespace = `${user?.id}:${filename}`;
 
   useEffect(() => {
-    if (filename && user?.id && flashcards.length === 0) {
+    console.log("generatedForNamespace:", generatedForNamespace);
+    console.log("namespace:", namespace);
+    console.log(generatedForNamespace === namespace);
+  }, []);
+
+  useEffect(() => {
+    if (filename && user?.id && generatedForNamespace !== namespace) {
       generateFlashcards();
     }
-  }, [filename, user?.id, flashcards.length]);
+  }, [filename, user?.id, generatedForNamespace, namespace]);
 
   const generateFlashcards = async () => {
     if (!filename || !user?.id) return;
@@ -47,7 +55,7 @@ const Flashcards = () => {
 
     try {
       const response = await axios.post(
-        `${apiUrl}/v1/inference/?model_name=llama-3.3-70b-versatile`,
+        `http://localhost:5000/v1/search`,
         {
           query: `Based on the uploaded content, create comprehensive flashcards for study purposes. Generate 10-15 flashcards covering the key concepts, definitions, important facts, and main ideas. Format your response as a JSON array where each flashcard has a "question" and "answer" field. Make the questions clear and concise, and the answers detailed but not too lengthy. Focus on the most important and testable information. Return only valid JSON without any additional text or formatting.`,
           namespace: namespace,
@@ -62,12 +70,12 @@ const Flashcards = () => {
       // Parse the response to extract flashcards
       let flashcardsData = [];
       try {
-        const cleanResponse = response.data.detail
+        const cleanResponse = response.data.aiResponse
           .replace(/```json|```/g, "")
           .trim();
         flashcardsData = JSON.parse(cleanResponse);
       } catch (parseError) {
-        const responseText = response.data.detail;
+        const responseText = response.data.aiResponse;
         flashcardsData = extractFlashcardsFromText(responseText);
         console.warn(
           "Failed to parse JSON, falling back to text extraction",
@@ -82,11 +90,14 @@ const Flashcards = () => {
           answer: card.answer || card.A || card.back || "",
         }));
         dispatch(setFlashCards(formattedFlashcards));
+        dispatch(setGeneratedForNamespace(namespace));
         setCurrentIndex(0);
         setIsFlipped(false);
       } else {
         setError("No flashcards could be generated from the content.");
       }
+
+      console.log(response.data);
     } catch (err) {
       console.error("Error generating flashcards:", err);
       setError("Failed to generate flashcards. Please try again.");

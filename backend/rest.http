@@ -1,0 +1,43 @@
+### GET YouTube Videos with Subtitles
+GET http://localhost:5000/api/youtube-videos-with-subtitles?subject=javascript&level=beginner&maxResults=10
+
+### GET YouTube Videos
+GET http://localhost:5000/api/educational-channels
+
+### Check database stats
+GET http://localhost:5000/api/vector-db-stats
+
+### 
+POST http://localhost:5000/api/add-video-transcript
+Content-Type: application/json
+
+{
+  "videoId": "YQHsXMglC9A"
+}
+
+### Try another popular educational video (freeCodeCamp)
+POST http://localhost:5000/v1/process/link
+Content-Type: application/json
+
+{
+  "source_url": "dQw4w9WgXcQ",
+  "namespace": "string:vid"
+}
+
+###
+POST http://localhost:5000/v1/search
+Content-Type: application/json
+
+{
+  "query": "what is it about",
+  "namespace": "8ecdee8f-6974-4bf9-a69c-6b29218b7c3e:Acemate Documentation.pdf"
+}
+### Search transcripts (to see if any content is actually stored)
+GET http://localhost:5000/api/search-ai?query=what+is+it+about&limit=5&videoId=dQw4w9WgXcQ
+
+###
+GET http://localhost:5000/api/video-summary?videoId=PkZNo7MFNFg&query=what is the video about
+
+###
+GET http://localhost:5000/api/debug-dimensions
+

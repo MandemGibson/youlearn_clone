@@ -11,11 +11,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CgSpinner } from "react-icons/cg";
 import { toast } from "react-toastify";
-import { apiUrl } from "../../entity";
+import supabase from "../../utils/supabase";
 
 const UploadPage = () => {
   const { user } = useAuth();
-  const { setContent, setFilename } = useContent();
+  const { setContent, setFilename, setYoutubeVideoId } = useContent();
 
   const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ const UploadPage = () => {
       setIsFetching(true);
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/youtube-videos"
+          "http://localhost:5000/api/educational-channels"
         );
 
         const data = response.data;
@@ -63,8 +63,221 @@ const UploadPage = () => {
     }
   }, [file, user, navigate, setContent]);
 
+  const extractYouTubeVideoId = (url: string): string | null => {
+    const patterns = [
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
+      /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]{11})/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/v\/([a-zA-Z0-9_-]{11})/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) {
+        return match[1];
+      }
+    }
+
+    if (/^[a-zA-Z0-9_-]{11}$/.test(url.trim())) {
+      return url.trim();
+    }
+
+    return null;
+  };
+
+  const checkExistingUpload = async (namespace: string, userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("upload")
+        .select("*")
+        .eq("namespace", namespace)
+        .eq("userId", userId)
+        .single();
+
+      if (error && error.code !== "PGRST116") {
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error checking existing upload:", error);
+      throw error;
+    }
+  };
+
+  // Function to save upload to Supabase
+  const saveUploadToSupabase = async (uploadData: {
+    type: string;
+    filename: string;
+    namespace: string;
+    source_url?: string;
+    file_size?: number;
+    file_url?: string;
+  }) => {
+    try {
+      // Get the current user's auth ID
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+
+      if (!authUser) {
+        throw new Error("User not authenticated");
+      }
+
+      // Check if upload already exists
+      const existingUpload = await checkExistingUpload(
+        uploadData.namespace,
+        authUser.id
+      );
+
+      if (existingUpload) {
+        console.log("Upload already exists:", existingUpload);
+        // Update the existing record if needed (e.g., status, updated_at)
+        const { data: updatedData, error: updateError } = await supabase
+          .from("upload")
+          .update({
+            status: "completed",
+            updated_at: new Date().toISOString(),
+          })
+          .eq("uploadId", existingUpload.uploadId)
+          .select()
+          .single();
+
+        if (updateError) {
+          throw updateError;
+        }
+
+        return updatedData;
+      }
+
+      // Create new upload record if it doesn't exist
+      const { data, error } = await supabase
+        .from("upload")
+        .insert([
+          {
+            type: uploadData.type,
+            filename: uploadData.filename,
+            namespace: uploadData.namespace,
+            source_url: uploadData.source_url || null,
+            file_size: uploadData.file_size || null,
+            file_url: uploadData.file_url || null,
+            userId: authUser.id,
+            status: "completed",
+          },
+        ])
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error saving upload to Supabase:", error);
+        throw error;
+      }
+
+      console.log("New upload saved to Supabase:", data);
+      return data;
+    } catch (error) {
+      console.error("Error in saveUploadToSupabase:", error);
+      throw error;
+    }
+  };
+
+  // Function to update upload status
+  const updateUploadStatus = async (
+    uploadId: string,
+    status: "processing" | "completed" | "failed"
+  ) => {
+    try {
+      const { error } = await supabase
+        .from("upload")
+        .update({
+          status,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("uploadId", uploadId);
+
+      if (error) {
+        console.error("Error updating upload status:", error);
+      }
+    } catch (error) {
+      console.error("Error in updateUploadStatus:", error);
+    }
+  };
+
+  const handleSubmitInput = async () => {
+    if (!inputValue.trim()) {
+      toast.error("Please enter a YouTube URL or video ID");
+      return;
+    }
+
+    if (!user) {
+      setOpenModal(true);
+      return;
+    }
+
+    const videoId = extractYouTubeVideoId(inputValue);
+
+    if (!videoId) {
+      toast.error("Please enter a valid YouTube URL or video ID");
+      return;
+    }
+
+    setIsLoading(true);
+
+    // First, create a pending upload record
+    let uploadRecord: any = null;
+
+    try {
+      const namespace = `${user.id}:${videoId}`;
+
+      // Save upload as processing first
+      uploadRecord = await saveUploadToSupabase({
+        type: "youtube",
+        filename: `YouTube Video: ${videoId}`,
+        namespace: namespace,
+        source_url: videoId,
+      });
+
+      const response = await axios.post(
+        `http://localhost:5000/v1/process/link`,
+        {
+          source_url: videoId,
+          namespace: namespace,
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error(`Processing failed: ${response.statusText}`);
+      }
+
+      // Update status to completed
+      if (uploadRecord) {
+        await updateUploadStatus(uploadRecord.uploadId, "completed");
+      }
+
+      setYoutubeVideoId(videoId);
+      setFilename(`${videoId}`);
+      setContent(null);
+      // dispatch(setGeneratedForNamespace(namespace));
+      navigate("/content");
+    } catch (error: any) {
+      console.error("Error processing YouTube video:", error);
+
+      // Update status to failed if we have an upload record
+      if (uploadRecord) {
+        await updateUploadStatus(uploadRecord.uploadId, "failed");
+      }
+
+      toast.error("Could not process YouTube video. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleUploadFile = async (event: ChangeEvent<HTMLInputElement>) => {
     setIsLoading(true);
+
+    let uploadRecord: any = null;
+
     try {
       const selectedFile = event.target.files ? event.target.files[0] : null;
 
@@ -80,13 +293,21 @@ const UploadPage = () => {
 
       setFilename(selectedFile.name);
 
+      const namespace = `${user?.id}:${selectedFile.name}`;
+
+      // Save upload as processing first
+      uploadRecord = await saveUploadToSupabase({
+        type: "pdf",
+        filename: selectedFile.name,
+        namespace: namespace,
+        file_size: selectedFile.size,
+      });
+
       const formData = new FormData();
       formData.append("file", selectedFile);
 
-      const namespace = user?.id + selectedFile.name;
-
       const response = await axios.post(
-        `${apiUrl}/v1/process/doc?namespace=${encodeURIComponent(namespace)}`,
+        `http://localhost:5000/v1/process/doc?namespace=${namespace}`,
         formData,
         {
           headers: {
@@ -102,9 +323,22 @@ const UploadPage = () => {
       const result = await response.data;
       console.log("File uploaded successfully:", result);
 
+      // Update status to completed
+      if (uploadRecord) {
+        await updateUploadStatus(uploadRecord.uploadId, "completed");
+      }
+
+      // Clear YouTube video ID when uploading a file
+      setYoutubeVideoId(null);
       setFile(URL.createObjectURL(selectedFile));
     } catch (error: any) {
       console.error("Error uploading file:", error);
+
+      // Update status to failed if we have an upload record
+      if (uploadRecord) {
+        await updateUploadStatus(uploadRecord.uploadId, "failed");
+      }
+
       toast.error("Could not upload file. Please try again.");
     } finally {
       setIsLoading(false);
@@ -133,7 +367,12 @@ const UploadPage = () => {
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Upload file, paste YouTube video, or record a lecture"
               className="p-2 text-[15px] placeholder:text-[#fafafa90] text-[#fafafa] 
-               focus:outline-none"
+               focus:outline-none bg-transparent"
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleSubmitInput();
+                }
+              }}
             />
             <div className="flex items-center justify-between">
               <div className="flex space-x-[8px]">
@@ -163,13 +402,19 @@ const UploadPage = () => {
                 </button>
               </div>
               <button
+                onClick={handleSubmitInput}
+                disabled={isLoading || !inputValue.trim()}
                 className={`p-2 ${
-                  inputValue == ""
-                    ? "bg-[#fafafa80]"
-                    : "bg-[#fafafa] hover:cursor-pointer"
-                } rounded-lg`}
+                  inputValue.trim() === "" || isLoading
+                    ? "bg-[#fafafa80] cursor-not-allowed"
+                    : "bg-[#fafafa] hover:cursor-pointer hover:bg-[#fafafa]/90"
+                } rounded-lg transition`}
               >
-                <IoArrowForward size={20} color="black" />
+                {isLoading ? (
+                  <CgSpinner className="animate-spin" size={20} color="black" />
+                ) : (
+                  <IoArrowForward size={20} color="black" />
+                )}
               </button>
             </div>
           </div>

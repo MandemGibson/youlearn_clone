@@ -1,19 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from "react-router-dom";
 import { AuthForm, Wrapper } from "../../components";
 import supabase from "../../utils/supabase";
 import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { User } from "../../entity";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
-
-  const { isLoading, setIsLoading, setUser } = useAuth();
-
+  const { isLoading, setIsLoading } = useAuth();
   const [errMsg, setErrMsg] = useState("");
 
   const handleSignUp = async (values: { email: string; password: string }) => {
     setIsLoading(true);
+    setErrMsg("");
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
@@ -22,19 +22,40 @@ const SignUpPage = () => {
 
       if (error) {
         setErrMsg(error.message);
-        console.error("Error signing in: ", error.message);
+        console.error("Error signing up: ", error.message);
         return;
       }
-      console.log(data.user as User);
-      
-      setUser(data.user as User);
-      navigate("/personal-form");
-    } catch (error) {
-      console.error("Error: ", error);
+
+      if (data.user) {
+        console.log("User created:", data.user);
+
+        const { error: userInsertError } = await supabase.from("user").insert({
+          userId: data.user.id,
+          email: data.user.email,
+          first_time_login: true,
+          username: null,
+          avatar_url: null,
+        });
+
+        if (userInsertError) {
+          console.error("Error creating user record:", userInsertError);
+          setErrMsg(
+            "Account created but failed to initialize profile. Please try signing in."
+          );
+        } else {
+          console.log("User record created successfully");
+        }
+
+        navigate("/login");
+      }
+    } catch (error: any) {
+      console.error("Signup error: ", error);
+      setErrMsg("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <Wrapper>
       <AuthForm

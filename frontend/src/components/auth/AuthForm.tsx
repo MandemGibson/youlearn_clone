@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, useState } from "react";
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 
 type AuthFormProps = {
@@ -17,7 +17,7 @@ type AuthFormProps = {
 const AuthForm: FC<AuthFormProps> = ({
   title,
   subtitle,
-  googleText,
+  // googleText,
   buttonText,
   footerText,
   footerLinkText,
@@ -73,9 +73,7 @@ const AuthForm: FC<AuthFormProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-center w-full min-h-screen px-1 space-y-5">
-      <h1 className="text-[20px] text-white font-semibold">
-        W<span className="relative -bottom-2">L</span>
-      </h1>
+      <h1 className="text-[20px] text-white font-semibold">AceMate</h1>
       <form
         onSubmit={handleSubmit}
         className="w-full flex flex-col items-center gap-[16px] sm:max-w-max"
@@ -83,7 +81,7 @@ const AuthForm: FC<AuthFormProps> = ({
         <h1 className="text-[#fafafa] text-[20px]">{title}</h1>
         <p className="text-[#a3a3a3] text-[16px]">{subtitle}</p>
 
-        <button
+        {/* <button
           type="button"
           className="flex w-full items-center py-3 bg-[#1717174C]
           justify-center border border-[#fafafa1a] rounded-[0.75rem]
@@ -98,7 +96,7 @@ const AuthForm: FC<AuthFormProps> = ({
           <div className="flex-1 border-t border-[#fafafa33]" />
           <span className="text-[12px] text-[#fafafa66]">or continue with</span>
           <div className="flex-1 border-t border-[#fafafa33]" />
-        </div>
+        </div> */}
 
         <div className="w-full p-3 border border-[#fafafa1a] rounded-[0.75rem]">
           <input
@@ -156,7 +154,7 @@ const AuthForm: FC<AuthFormProps> = ({
         )}
 
         <p className="w-full text-right text-[12px] text-[#fafafa80] hover:text-[#fafafa] hover:underline transition">
-          <a href="reset-password">Forgot password?</a>
+          <a href="forgot-password">Forgot password?</a>
         </p>
 
         <button

@@ -37,7 +37,7 @@ const MIN_IFRAME_WIDTH = 30;
 const MAX_IFRAME_WIDTH = 70;
 
 const ContentPage: React.FC = () => {
-  const { content } = useContent();
+  const { content, youtubeVideoId } = useContent();
   const navigate = useNavigate();
   const resizeRef = useRef<HTMLDivElement>(null);
   const dragHandleRef = useRef<HTMLDivElement>(null);
@@ -77,8 +77,11 @@ const ContentPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (content === null) navigate("/main");
-  }, [content, navigate]);
+    // Navigate back if neither content nor YouTube video ID is available
+    if (content === null && youtubeVideoId === null) {
+      navigate("/main");
+    }
+  }, [content, youtubeVideoId, navigate]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent): void => {
@@ -174,7 +177,8 @@ const ContentPage: React.FC = () => {
     });
   };
 
-  if (!content) return <p>Loading...</p>;
+  // Show loading if neither content nor YouTube video ID is available
+  if (!content && !youtubeVideoId) return <p>Loading...</p>;
 
   return (
     <Wrapper>
@@ -186,7 +190,7 @@ const ContentPage: React.FC = () => {
           md:space-x-[20px] pt-0 overflow-hidden"
           ref={resizeRef}
         >
-          {/* iFrame Container */}
+          {/* Content Container (PDF or YouTube) */}
           <div
             ref={iframeContainerRef}
             className={`md:h-full flex-shrink-0 h-[55%] md:rounded-lg`}
@@ -194,13 +198,29 @@ const ContentPage: React.FC = () => {
               width: windowWidth > 768 ? `${iframeWidth}%` : "100%",
             }}
           >
-            <iframe
-              src={content}
-              width="100%"
-              height="100%"
-              className="md:rounded-lg w-full h-full"
-              title="Content"
-            />
+            {youtubeVideoId ? (
+              <iframe
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${youtubeVideoId}?controls=1`}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="md:rounded-lg w-full h-full"
+              />
+            ) : content ? (
+              <iframe
+                src={content}
+                width="100%"
+                height="100%"
+                className="md:rounded-lg w-full h-full"
+                title="PDF Content"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-[#17171766] md:rounded-lg">
+                <p className="text-[#a3a3a3]">No content available</p>
+              </div>
+            )}
           </div>
 
           {/* Resizable Divider */}

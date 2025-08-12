@@ -76,7 +76,7 @@ const RoomModal: React.FC<RoomModalProps> = ({ onClose }) => {
         />
 
         <div className="text-center">
-          <h2 className="text-xl font-medium text-[#fafafa]">uLearn</h2>
+          <h2 className="text-xl font-medium text-[#fafafa]">AceMate</h2>
           <p className="text-[14px]">Create or join a room</p>
         </div>
 

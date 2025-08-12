@@ -3,9 +3,15 @@ import UploadPage from "./main/UploadPage";
 import SignInPage from "./auth/SignInPage";
 import SignUpPage from "./auth/SignUpPage";
 import ForgotPassword from "./auth/ForgotPassword";
+import ResetPassword from "./auth/ResetPassword";
 import PersonalForm from "./main/PersonalForm";
 
 export {
-    LandingPage, UploadPage, SignInPage, SignUpPage, ForgotPassword,
-    PersonalForm
-}
+  LandingPage,
+  UploadPage,
+  SignInPage,
+  SignUpPage,
+  ForgotPassword,
+  PersonalForm,
+  ResetPassword,
+};

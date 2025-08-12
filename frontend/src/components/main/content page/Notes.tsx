@@ -23,7 +23,6 @@ import { BiNote } from "react-icons/bi";
 import { useContent } from "../../../hooks/useContent";
 import { useAuth } from "../../../hooks/useAuth";
 import axios from "axios";
-import { apiUrl } from "../../../entity";
 import { CiEdit } from "react-icons/ci";
 
 interface Note {
@@ -80,7 +79,7 @@ const Notes = () => {
     priority: "medium" as Note["priority"],
   });
 
-  const namespace = user?.id + filename;
+  const namespace = `${user?.id}:${filename}`;
 
   const colors = [
     "#fbbf24", // yellow
@@ -115,7 +114,7 @@ const Notes = () => {
 
     try {
       const response = await axios.post(
-        `${apiUrl}/v1/inference/?model_name=llama-3.3-70b-versatile`,
+        `http://localhost:5000/v1/search`,
         {
           query: `Extract and organize notes from the uploaded content. Create structured notes including highlights, key insights, questions, and summaries. Return JSON format: {
             "notes": [
@@ -150,7 +149,7 @@ const Notes = () => {
 
       let parsedData = null;
       try {
-        const cleanResponse = response.data.detail
+        const cleanResponse = response.data.aiResponse
           .replace(/```json|```/g, "")
           .trim();
         parsedData = JSON.parse(cleanResponse);

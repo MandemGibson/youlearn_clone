@@ -17,7 +17,7 @@ const Footer = () => {
         className="flex flex-col md:flex-row md:justify-between items-center
        py-[20px] gap-[20px] text-[16px] text-[#6d6d6d]"
       >
-        <h2>&copy; Copyright {year} uLearn Inc.</h2>
+        <h2>&copy; Copyright {year} AceMate Inc.</h2>
         <ul className="flex flex-wrap gap-[20px] items-center justify-center">
           {footerLinks.map(({ id, name, link }) => (
             <li

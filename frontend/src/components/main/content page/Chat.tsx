@@ -7,7 +7,6 @@ import { IconAndTitle } from "../SideBar";
 import { useContent } from "../../../hooks/useContent";
 import axios from "axios";
 import { useAuth } from "../../../hooks/useAuth";
-import { apiUrl } from "../../../entity";
 import ReactMarkdown from "react-markdown";
 
 const Chat = () => {
@@ -32,7 +31,7 @@ const Chat = () => {
     setLearnPlus((prev) => !prev);
   };
 
-  const namespace = user?.id + filename;
+  const namespace = `${user?.id}:${filename}`;
 
   // Typewriter effect
   useEffect(() => {
@@ -100,7 +99,7 @@ const Chat = () => {
 
     try {
       const response = await axios.post(
-        `${apiUrl}/v1/inference/?model_name=llama-3.3-70b-versatile`,
+        `http://localhost:5000/v1/search`,
         {
           query: input,
           namespace: namespace,
@@ -113,10 +112,10 @@ const Chat = () => {
         }
       );
 
-      console.log(response.data.detail);
+      console.log(response.data);
 
       setQueries((prev) => [...prev, input]);
-      setResponses((prev) => [...prev, response.data.detail]);
+      setResponses((prev) => [...prev, response.data.aiResponse]);
       setCurrentTypingIndex(responses.length); // Start typewriter for new response
       setInput("");
 

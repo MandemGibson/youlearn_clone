@@ -17,7 +17,6 @@ import {} from "react-icons/bi";
 import { useContent } from "../../../hooks/useContent";
 import { useAuth } from "../../../hooks/useAuth";
 import axios from "axios";
-import { apiUrl } from "../../../entity";
 import { PiBookOpenLight } from "react-icons/pi";
 
 interface Chapter {
@@ -61,7 +60,7 @@ const Chapters = () => {
     "list"
   );
 
-  const namespace = user?.id + filename;
+  const namespace = `${user?.id}:${filename}`;
 
   useEffect(() => {
     if (filename && user?.id) {
@@ -77,7 +76,7 @@ const Chapters = () => {
 
     try {
       const response = await axios.post(
-        `${apiUrl}/v1/inference/?model_name=llama-3.3-70b-versatile`,
+        `http://localhost:5000/v1/search`,
         {
           query: `Analyze the uploaded content and break it down into logical chapters or sections. Create a structured breakdown with the following JSON format: {
             "chapters": [
@@ -111,12 +110,12 @@ const Chapters = () => {
 
       let parsedData = null;
       try {
-        const cleanResponse = response.data.detail
+        const cleanResponse = response.data.aiResponse
           .replace(/```json|```/g, "")
           .trim();
         parsedData = JSON.parse(cleanResponse);
       } catch (parseError) {
-        parsedData = extractChaptersFromText(response.data.detail);
+        parsedData = extractChaptersFromText(response.data.aiResponse);
         console.warn(
           "Failed to parse JSON, falling back to text extraction:",
           parseError

@@ -15,7 +15,6 @@ import { BiTargetLock } from "react-icons/bi";
 import { useContent } from "../../../hooks/useContent";
 import { useAuth } from "../../../hooks/useAuth";
 import axios from "axios";
-import { apiUrl } from "../../../entity";
 
 interface QuizQuestion {
   id: number;
@@ -53,7 +52,7 @@ const Quizzes = () => {
     "mixed" | "easy" | "medium" | "hard"
   >("mixed");
 
-  const namespace = user?.id + filename;
+  const namespace = `${user?.id}:${filename}`;
 
   // Timer effect
   useEffect(() => {
@@ -86,7 +85,7 @@ const Quizzes = () => {
           : `Focus on ${difficulty} difficulty questions`;
 
       const response = await axios.post(
-        `${apiUrl}/v1/inference/?model_name=llama-3.3-70b-versatile`,
+        `http://localhost:5000/v1/search`,
         {
           query: `Based on the uploaded content, create a comprehensive quiz with 10-12 multiple choice questions. ${difficultyPrompt}. Each question should test understanding of key concepts, facts, and important details from the content. Format your response as a JSON array where each question has: "question" (the question text), "options" (array of 4 possible answers), "correctAnswer" (index 0-3 of the correct option), "explanation" (brief explanation of why the answer is correct), "difficulty" (easy/medium/hard), and "category" (topic area). Make questions challenging but fair, covering different topics from the content. Return only valid JSON without any additional text.`,
           namespace: namespace,
@@ -98,14 +97,14 @@ const Quizzes = () => {
         }
       );
 
+      console.log(response.data);
+
       let quizData = [];
       try {
-        const cleanResponse = response.data.detail
-          .replace(/```json|```/g, "")
-          .trim();
+        const cleanResponse = response.data.aiResponse;
         quizData = JSON.parse(cleanResponse);
       } catch (parseError) {
-        quizData = extractQuizFromText(response.data.detail);
+        quizData = extractQuizFromText(response.data.aiResponse);
         console.warn(
           "Failed to parse JSON, falling back to text extraction",
           parseError

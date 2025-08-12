@@ -1,12 +1,12 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { IconType } from "react-icons";
-import { AiOutlineDiscord } from "react-icons/ai";
+// import { AiOutlineDiscord } from "react-icons/ai";
 import { FaRegThumbsUp } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
-import { FiBook, FiDollarSign } from "react-icons/fi";
+import { FiBook /*FiDollarSign*/ } from "react-icons/fi";
 import { GoHistory } from "react-icons/go";
 import { IoChevronDown, IoSettingsOutline } from "react-icons/io5";
-import { LuCrown, LuLogOut } from "react-icons/lu";
+import { /*LuCrown*/ LuLogOut } from "react-icons/lu";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { useAuth } from "../../hooks/useAuth";
 import supabase from "../../utils/supabase";
@@ -15,7 +15,9 @@ import { TiDeleteOutline } from "react-icons/ti";
 import RoomModal from "../RoomModal";
 import { toast } from "react-toastify";
 import { useRoom } from "../../hooks/useRoom";
-import { Room } from "../../entity";
+import { Room, Upload } from "../../entity";
+import { useClickOutside } from "../../hooks/useClickOutside";
+import { useUploads } from "../../hooks/useUploads";
 
 const SideBar = ({
   isOpen,
@@ -26,16 +28,24 @@ const SideBar = ({
 }) => {
   const { user } = useAuth();
   const { rooms, isLoading } = useRoom();
+  const { uploads, isLoading: loading } = useUploads();
   const navigate = useNavigate();
 
   const [openRoomModal, setOpenRoomModal] = useState(false);
   const [myRooms, setMyRooms] = useState<Room[]>([]);
+  const [recentUploads, setRecentUploads] = useState<Upload[]>([]);
 
   useEffect(() => {
     setMyRooms(
       isLoading ? [] : rooms.filter((room) => room.userId === user?.id)
     );
   }, [rooms, user, isLoading]);
+
+  useEffect(() => {
+    setRecentUploads(
+      loading ? [] : uploads.filter((upload) => upload.userId === user?.id)
+    );
+  }, [uploads, user, loading]);
 
   const deleteRoom = async (roomId: string) => {
     try {
@@ -114,9 +124,17 @@ const SideBar = ({
               </div>
               <div className="flex flex-col gap-[8px] text-[14px]">
                 <h2 className="text-[#fafafa] font-semibold">Recents</h2>
-                <p className="text-[#fafafa99]">
-                  Upload files or paste YouTube links to view content here.
-                </p>
+                {recentUploads.length === 0 ? (
+                  <p className="text-[#fafafa99]">
+                    Upload files or paste YouTube links to view content here.
+                  </p>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    {recentUploads.map((upload, idx) => {
+                      return <div key={idx}>{upload.filename}</div>;
+                    })}
+                  </div>
+                )}
               </div>
               <div className="flex flex-col gap-[8px] text-[14px]">
                 <h2 className="text-[#fafafa] font-semibold">Rooms</h2>
@@ -179,8 +197,8 @@ const SideBar = ({
                 <h2 className="text-[#fafafa] font-semibold">Help & Tools</h2>
                 <IconAndTitle Icon={FaRegThumbsUp} title="Feedback" />
                 <IconAndTitle Icon={FiBook} title="Quick Guide" />
-                <IconAndTitle Icon={AiOutlineDiscord} title="Discord Server" />
-                <IconAndTitle Icon={FiDollarSign} title="Invite & Earn" />
+                {/* <IconAndTitle Icon={AiOutlineDiscord} title="Discord Server" /> */}
+                {/* <IconAndTitle Icon={FiDollarSign} title="Invite & Earn" /> */}
               </div>
             </div>
           )}
@@ -243,13 +261,19 @@ export const IconAndTitle = ({
 
 const Dropdown = () => {
   const [open, setOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  // const [darkMode, setDarkMode] = useState(false);
   const { user, setUser, setIsLoading, isLoading } = useAuth();
 
-  const toggleDarkMode = () => {
-    setDarkMode((prev) => !prev);
-    document.documentElement.classList.toggle("dark", !darkMode);
-  };
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside(dropdownRef, () => {
+    if (open) setOpen(false);
+  });
+
+  // const toggleDarkMode = () => {
+  //   setDarkMode((prev) => !prev);
+  //   document.documentElement.classList.toggle("dark", !darkMode);
+  // };
 
   const handleLogout = async () => {
     setIsLoading(true);
@@ -275,7 +299,7 @@ const Dropdown = () => {
         border-[#fafafa33] py-[12px] px-4 rounded-[0.75rem] hover:bg-[#fafafa0d]
         hover:cursor-pointer`}
       >
-        {user?.email}
+        <span className="w-full truncate">{user?.email}</span>
         <IoChevronDown
           className={`ml-1 transition-transform ${open ? "rotate-180" : ""}`}
         />
@@ -285,6 +309,7 @@ const Dropdown = () => {
           className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 
           border border-[#262626] w-full rounded-[0.75rem] z-50
           overflow-y-auto scrollbar-hide bg-[#000] flex flex-col`}
+          ref={dropdownRef}
         >
           <div className="p-1 pb-0">
             <div
@@ -293,15 +318,15 @@ const Dropdown = () => {
             >
               <div className="w-[32px] h-[32px] rounded-full bg-white"></div>
               <h3 className="text-[14px] text-[#fafafa]">
-                Philip Gibson Cudjoe
+                {user?.username ? user?.username : user?.email.split("@")[0]}
               </h3>
             </div>
           </div>
           <div className="p-1">
             <IconAndTitle Icon={IoSettingsOutline} title="Settings" />
-            <IconAndTitle Icon={LuCrown} title="Pricing" />
+            {/* <IconAndTitle Icon={LuCrown} title="Pricing" /> */}
             <IconAndTitle Icon={GoHistory} title="History" />
-            <IconAndTitle
+            {/* <IconAndTitle
               child={
                 <div
                   onClick={toggleDarkMode}
@@ -319,7 +344,7 @@ const Dropdown = () => {
                 </div>
               }
               title="Dark Mode"
-            />
+            /> */}
           </div>
           <button
             onClick={handleLogout}

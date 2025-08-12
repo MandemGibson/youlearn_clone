@@ -4,6 +4,7 @@ import { ContentContext } from "../entity";
 export const ContentProvider = ({ children }: { children: ReactNode }) => {
   const [filename, setFilename] = useState("");
   const [content, setContent] = useState<string | null>(null);
+  const [youtubeVideoId, setYoutubeVideoId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   return (
@@ -13,6 +14,8 @@ export const ContentProvider = ({ children }: { children: ReactNode }) => {
         setFilename,
         content,
         setContent,
+        youtubeVideoId,
+        setYoutubeVideoId,
         isLoading,
         setIsLoading,
       }}

@@ -18,7 +18,6 @@ import { BiHighlight } from "react-icons/bi";
 import { useContent } from "../../../hooks/useContent";
 import { useAuth } from "../../../hooks/useAuth";
 import axios from "axios";
-import { apiUrl } from "../../../entity";
 
 interface SummaryData {
   executiveSummary: string;
@@ -50,7 +49,7 @@ const Summary = () => {
     actions: false,
   });
 
-  const namespace = user?.id + filename;
+  const namespace = `${user?.id}:${filename}`;
 
   useEffect(() => {
     if (filename && user?.id) {
@@ -75,7 +74,7 @@ const Summary = () => {
       };
 
       const response = await axios.post(
-        `${apiUrl}/v1/inference/?model_name=llama-3.3-70b-versatile`,
+        `http://localhost:5000/v1/search`,
         {
           query: `${summaryPrompts[summaryType]} Based on the uploaded content, provide a well-structured summary. Format your response as JSON with the following structure: {
             "executiveSummary": "Main overview paragraph",
@@ -97,12 +96,12 @@ const Summary = () => {
 
       let summaryData = null;
       try {
-        const cleanResponse = response.data.detail
+        const cleanResponse = response.data.aiResponse
           .replace(/```json|```/g, "")
           .trim();
         summaryData = JSON.parse(cleanResponse);
       } catch (parseError) {
-        summaryData = extractSummaryFromText(response.data.detail);
+        summaryData = extractSummaryFromText(response.data.aiResponse);
         console.error(
           "Failed to parse JSON response, using fallback:",
           parseError
