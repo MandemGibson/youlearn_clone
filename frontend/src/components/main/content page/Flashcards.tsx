@@ -55,33 +55,11 @@ const Flashcards = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/v1/search`,
-        {
-          query: `Based on the uploaded content, create comprehensive flashcards for study purposes. Generate 10-15 flashcards covering the key concepts, definitions, important facts, and main ideas. Format your response as a JSON array where each flashcard has a "question" and "answer" field. Make the questions clear and concise, and the answers detailed but not too lengthy. Focus on the most important and testable information. Return only valid JSON without any additional text or formatting.`,
-          namespace: namespace,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        `http://localhost:5000/v1/generate/flashcards`,
+        { namespace: namespace, count: 15 },
+        { headers: { "Content-Type": "application/json" } }
       );
-
-      // Parse the response to extract flashcards
-      let flashcardsData = [];
-      try {
-        const cleanResponse = response.data.aiResponse
-          .replace(/```json|```/g, "")
-          .trim();
-        flashcardsData = JSON.parse(cleanResponse);
-      } catch (parseError) {
-        const responseText = response.data.aiResponse;
-        flashcardsData = extractFlashcardsFromText(responseText);
-        console.warn(
-          "Failed to parse JSON, falling back to text extraction",
-          parseError
-        );
-      }
+      const flashcardsData = response.data.flashcards || [];
 
       if (Array.isArray(flashcardsData) && flashcardsData.length > 0) {
         const formattedFlashcards = flashcardsData.map((card, index) => ({
@@ -104,47 +82,6 @@ const Flashcards = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Fallback function to extract flashcards from text response
-  const extractFlashcardsFromText = (text: string) => {
-    const cards = [];
-    const lines = text.split("\n");
-    let currentCard = { question: "", answer: "" };
-    let isAnswer = false;
-
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (
-        trimmed.toLowerCase().includes("question") ||
-        trimmed.startsWith("Q:")
-      ) {
-        if (currentCard.question && currentCard.answer) {
-          cards.push({ ...currentCard });
-        }
-        currentCard = {
-          question: trimmed.replace(/^(Question:|Q:)\s*/i, ""),
-          answer: "",
-        };
-        isAnswer = false;
-      } else if (
-        trimmed.toLowerCase().includes("answer") ||
-        trimmed.startsWith("A:")
-      ) {
-        currentCard.answer = trimmed.replace(/^(Answer:|A:)\s*/i, "");
-        isAnswer = true;
-      } else if (trimmed && isAnswer) {
-        currentCard.answer += " " + trimmed;
-      } else if (trimmed && !isAnswer && currentCard.question) {
-        currentCard.question += " " + trimmed;
-      }
-    }
-
-    if (currentCard.question && currentCard.answer) {
-      cards.push(currentCard);
-    }
-
-    return cards.length > 0 ? cards : [];
   };
 
   const nextCard = () => {

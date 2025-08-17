@@ -79,32 +79,23 @@ const Quizzes = () => {
     setError(null);
 
     try {
-      const difficultyPrompt =
-        difficulty === "mixed"
-          ? "Mix of easy, medium, and hard questions"
-          : `Focus on ${difficulty} difficulty questions`;
-
       const response = await axios.post(
-        `http://localhost:5000/v1/search`,
-        {
-          query: `Based on the uploaded content, create a comprehensive quiz with 10-12 multiple choice questions. ${difficultyPrompt}. Each question should test understanding of key concepts, facts, and important details from the content. Format your response as a JSON array where each question has: "question" (the question text), "options" (array of 4 possible answers), "correctAnswer" (index 0-3 of the correct option), "explanation" (brief explanation of why the answer is correct), "difficulty" (easy/medium/hard), and "category" (topic area). Make questions challenging but fair, covering different topics from the content. Return only valid JSON without any additional text.`,
-          namespace: namespace,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        `http://localhost:5000/v1/generate/quiz`,
+        { namespace, count: 12, difficulty },
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log(response.data);
-
-      let quizData = [];
+      let quizData = response.data.quiz || [];
+      const raw = response.data.raw || response.data.aiResponse || null;
       try {
-        const cleanResponse = response.data.aiResponse;
-        quizData = JSON.parse(cleanResponse);
+        if (raw && typeof raw === "string") {
+          const clean = raw.replace(/```json|```/g, "").trim();
+          quizData = JSON.parse(clean);
+        }
       } catch (parseError) {
-        quizData = extractQuizFromText(response.data.aiResponse);
+        if (raw && typeof raw === "string") {
+          quizData = extractQuizFromText(raw);
+        }
         console.warn(
           "Failed to parse JSON, falling back to text extraction",
           parseError
@@ -142,33 +133,46 @@ const Quizzes = () => {
   };
 
   const extractQuizFromText = (text: string) => {
-    const questions = [];
-    const lines = text.split("\n");
-    let currentQuestion = null;
+    if (!text || typeof text !== "string") return [] as QuizQuestion[];
+    const questions: QuizQuestion[] = [];
+    const lines = text.split(/\r?\n/).filter((l) => l.trim());
+    let current: QuizQuestion | null = null;
 
     for (const line of lines) {
-      if (line.includes("?")) {
-        if (currentQuestion) {
-          questions.push(currentQuestion);
-        }
-        currentQuestion = {
-          question: line.trim(),
-          options: [] as string[],
+      const trimmed = line.trim();
+      const qMatch = /^\d+\.|^Q\d+[:-]/i.test(trimmed) || /\?$/.test(trimmed);
+      if (qMatch) {
+        if (current) questions.push(current);
+        const questionText = trimmed.replace(/^Q?\d+[:.-]?\s*/i, "").trim();
+        current = {
+          id: questions.length + 1,
+          question: questionText,
+          options: [],
           correctAnswer: 0,
           explanation: "",
           difficulty: "medium",
           category: "General",
         };
-      } else if (line.trim().match(/^[A-D]\)/) && currentQuestion) {
-        currentQuestion.options.push(line.trim().substring(2));
+        continue;
+      }
+      const optMatch = trimmed.match(/^([A-D])[).:-]\s*(.+)/);
+      if (optMatch && current) {
+        current.options.push(optMatch[2].trim());
+        continue;
+      }
+      const ansMatch = trimmed.match(/^(Answer|Correct Answer)[:-]\s*([A-D])/i);
+      if (ansMatch && current) {
+        const idx = ["A", "B", "C", "D"].indexOf(ansMatch[2].toUpperCase());
+        if (idx >= 0) current.correctAnswer = idx;
+        continue;
+      }
+      const explMatch = trimmed.match(/^(Explanation)[:-]\s*(.+)/i);
+      if (explMatch && current) {
+        current.explanation = explMatch[2].trim();
       }
     }
-
-    if (currentQuestion) {
-      questions.push(currentQuestion);
-    }
-
-    return questions;
+    if (current) questions.push(current);
+    return questions.filter((q) => q.question && q.options.length >= 2);
   };
 
   const startQuiz = () => {

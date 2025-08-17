@@ -76,51 +76,20 @@ const Chapters = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/v1/search`,
-        {
-          query: `Analyze the uploaded content and break it down into logical chapters or sections. Create a structured breakdown with the following JSON format: {
-            "chapters": [
-              {
-                "id": 1,
-                "title": "Chapter Title",
-                "summary": "Brief chapter summary",
-                "content": "Main content overview",
-                "keyPoints": ["point1", "point2", ...],
-                "startPage": 1,
-                "endPage": 5,
-                "wordCount": 500,
-                "readingTime": 3,
-                "subsections": [
-                  {"title": "Subsection Title", "summary": "Subsection summary"}
-                ]
-              }
-            ],
-            "totalChapters": 5,
-            "documentStructure": "Description of how the document is organized",
-            "navigationTips": ["tip1", "tip2", ...]
-          }. Identify natural breaks, themes, or existing chapter divisions. Return only valid JSON.`,
-          namespace: namespace,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        `http://localhost:5000/v1/generate/chapters`,
+        { namespace, maxChapters: 10 },
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      let parsedData = null;
-      try {
-        const cleanResponse = response.data.aiResponse
-          .replace(/```json|```/g, "")
-          .trim();
-        parsedData = JSON.parse(cleanResponse);
-      } catch (parseError) {
-        parsedData = extractChaptersFromText(response.data.aiResponse);
-        console.warn(
-          "Failed to parse JSON, falling back to text extraction:",
-          parseError
-        );
-      }
+      const parsedData = {
+        chapters: response.data.chapters || [],
+        totalChapters: response.data.total || 0,
+        documentStructure:
+          response.data.meta?.documentStructure ||
+          response.data.documentStructure,
+        navigationTips:
+          response.data.meta?.navigationTips || response.data.navigationTips,
+      };
 
       if (parsedData && parsedData.chapters) {
         setChapterData({
@@ -159,31 +128,6 @@ const Chapters = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const extractChaptersFromText = (text: string) => {
-    // Fallback text parsing
-    const sections = text.split(/\n\s*\n/).filter((section) => section.trim());
-    const chapters = sections.slice(0, 10).map((section, index) => ({
-      id: index + 1,
-      title: `Section ${index + 1}`,
-      summary: section.substring(0, 200) + "...",
-      content: section,
-      keyPoints: [`Key point from section ${index + 1}`],
-      wordCount: section.split(" ").length,
-      readingTime: Math.ceil(section.split(" ").length / 200),
-      subsections: [],
-    }));
-
-    return {
-      chapters,
-      totalChapters: chapters.length,
-      documentStructure: "Auto-generated structure based on content breaks",
-      navigationTips: [
-        "Navigate through sections sequentially",
-        "Use search to find specific topics",
-      ],
-    };
   };
 
   const toggleChapter = (chapterId: number) => {

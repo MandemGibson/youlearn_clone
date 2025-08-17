@@ -31,7 +31,7 @@ const RoomModal: React.FC<RoomModalProps> = ({ onClose }) => {
 
     setIsLoading((prev) => ({ ...prev, creating: true }));
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("room")
         .insert([{ roomId: id, name: roomName, userId: user?.id }]);
 
@@ -39,7 +39,6 @@ const RoomModal: React.FC<RoomModalProps> = ({ onClose }) => {
         console.error("Error creating room:", error);
         return;
       }
-      console.log(data);
 
       navigate(`/room/${id}`);
     } catch (error) {
@@ -49,15 +48,18 @@ const RoomModal: React.FC<RoomModalProps> = ({ onClose }) => {
     }
   };
 
-  const handleJoinRoom = () => {
+  const handleJoinRoom = async () => {
     setIsLoading((prev) => ({ ...prev, joining: true }));
     try {
-      const roomExist = rooms.some((room) => room.roomId === roomId);
-      if (roomExist) navigate(`/room/${roomId}`);
+      // First check local cache
+      const roomExist = rooms.some((room) => room.roomId === roomId.trim());
+
+      if (roomExist) navigate(`/room/${roomId.trim()}`);
       else
         toast.warn("Room does not exist. Create a new room or enter a new ID");
     } catch (error) {
       console.error("Error joining room: ", error);
+      toast.error("Failed to join room");
     } finally {
       setIsLoading((prev) => ({ ...prev, joining: false }));
     }

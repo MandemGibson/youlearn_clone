@@ -2,4 +2,4 @@
 GET https://ai-inference-service-pp473w3lr.vercel.app/v1/inference/models
 
 ###
-GET http://localhost:5000/api/youtube-videos/?videoUrl=https://www.youtube.com/watch?v=VKzN8Gatbrs
+GET http://localhost:5000/v1/youtube-videos/?videoUrl=https://www.youtube.com/watch?v=VKzN8Gatbrs

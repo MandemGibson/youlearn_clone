@@ -1,8 +1,8 @@
 ### GET YouTube Videos with Subtitles
-GET http://localhost:5000/api/youtube-videos-with-subtitles?subject=javascript&level=beginner&maxResults=10
+GET http://localhost:5000/v1/youtube-videos-with-subtitles?subject=javascript&level=beginner&maxResults=10
 
 ### GET YouTube Videos
-GET http://localhost:5000/api/educational-channels
+GET http://localhost:5000/v1/educational-channels
 
 ### Check database stats
 GET http://localhost:5000/api/vector-db-stats

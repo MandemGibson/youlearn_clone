@@ -114,49 +114,13 @@ const Notes = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/v1/search`,
-        {
-          query: `Extract and organize notes from the uploaded content. Create structured notes including highlights, key insights, questions, and summaries. Return JSON format: {
-            "notes": [
-              {
-                "id": "note_1",
-                "title": "Note Title",
-                "content": "Full note content",
-                "excerpt": "Brief excerpt (50 chars)",
-                "color": "#fbbf24",
-                "tags": ["tag1", "tag2"],
-                "isPinned": false,
-                "isBookmarked": false,
-                "createdAt": "2024-01-01T00:00:00Z",
-                "updatedAt": "2024-01-01T00:00:00Z",
-                "sourceRef": {"page": 1, "chapter": "Chapter 1", "section": "Introduction"},
-                "type": "highlight",
-                "priority": "medium"
-              }
-            ],
-            "totalNotes": 5,
-            "categories": ["highlights", "insights", "questions"],
-            "autoSummary": "Overview of extracted notes"
-          }. Focus on important concepts, definitions, insights, and actionable items.`,
-          namespace: namespace,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        `http://localhost:5000/v1/generate/notes`,
+        { namespace },
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      let parsedData = null;
-      try {
-        const cleanResponse = response.data.aiResponse
-          .replace(/```json|```/g, "")
-          .trim();
-        parsedData = JSON.parse(cleanResponse);
-      } catch (parseError) {
-        parsedData = createDefaultNotes();
-        console.error("Failed to parse notes data:", parseError);
-      }
+      const parsedData = response.data;
+      console.log("Response data:", parsedData); // Log the entire response data
 
       if (parsedData && parsedData.notes) {
         setNotesData({
@@ -176,7 +140,7 @@ const Notes = () => {
             type: note.type || "highlight",
             priority: note.priority || "medium",
           })),
-          totalNotes: parsedData.totalNotes || parsedData.notes.length,
+          totalNotes: parsedData.total || parsedData.notes.length,
           categories: Array.isArray(parsedData.categories)
             ? parsedData.categories
             : [],

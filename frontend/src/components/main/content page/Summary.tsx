@@ -18,6 +18,19 @@ import { BiHighlight } from "react-icons/bi";
 import { useContent } from "../../../hooks/useContent";
 import { useAuth } from "../../../hooks/useAuth";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectSummary,
+  selectSummaryLoading,
+  selectSummaryError,
+  selectSummaryType,
+  selectSummaryNamespace,
+  setSummaryType,
+  setSummaryLoading,
+  setSummaryError,
+  setSummaryData,
+  setSummaryNamespace,
+} from "../../../redux/slices/summarySlice";
 
 interface SummaryData {
   executiveSummary: string;
@@ -32,13 +45,13 @@ interface SummaryData {
 const Summary = () => {
   const { user } = useAuth();
   const { filename } = useContent();
-  const [summary, setSummary] = useState<SummaryData | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch();
+  const summary = useSelector(selectSummary) as SummaryData | null;
+  const loading = useSelector(selectSummaryLoading);
+  const error = useSelector(selectSummaryError);
+  const summaryType = useSelector(selectSummaryType);
+  const generatedFor = useSelector(selectSummaryNamespace);
   const [copied, setCopied] = useState(false);
-  const [summaryType, setSummaryType] = useState<
-    "brief" | "detailed" | "executive"
-  >("brief");
   const [expandedSections, setExpandedSections] = useState<{
     [key: string]: boolean;
   }>({
@@ -49,59 +62,38 @@ const Summary = () => {
     actions: false,
   });
 
-  const namespace = `${user?.id}:${filename}`;
-
   useEffect(() => {
     if (filename && user?.id) {
-      generateSummary();
+      const ns = `${user.id}:${filename}:${summaryType}`;
+      if (generatedFor !== ns) {
+        generateSummary(ns);
+      }
     }
-  }, [filename, user?.id, summaryType]);
+  }, [filename, user?.id, summaryType, generatedFor]);
 
-  const generateSummary = async () => {
+  const generateSummary = async (nsOverride?: string) => {
     if (!filename || !user?.id) return;
-
-    setLoading(true);
-    setError(null);
+    const ns = nsOverride || `${user.id}:${filename}:${summaryType}`;
+    dispatch(setSummaryLoading(true));
+    dispatch(setSummaryError(null));
 
     try {
-      const summaryPrompts = {
-        brief:
-          "Create a concise summary focusing on the main points and key takeaways. Include key points, main topics, and conclusions.",
-        detailed:
-          "Create a comprehensive summary with detailed analysis. Include executive summary, key points, main topics, conclusions, and actionable items.",
-        executive:
-          "Create an executive summary suitable for leadership, focusing on strategic insights, key decisions points, and recommendations.",
-      };
-
       const response = await axios.post(
-        `http://localhost:5000/v1/search`,
-        {
-          query: `${summaryPrompts[summaryType]} Based on the uploaded content, provide a well-structured summary. Format your response as JSON with the following structure: {
-            "executiveSummary": "Main overview paragraph",
-            "keyPoints": ["point1", "point2", ...],
-            "mainTopics": ["topic1", "topic2", ...],
-            "conclusions": ["conclusion1", "conclusion2", ...],
-            "actionItems": ["action1", "action2", ...] (if applicable),
-            "wordCount": estimated_word_count,
-            "readingTime": estimated_reading_time_in_minutes
-          }. Return only valid JSON.`,
-          namespace: namespace,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        `http://localhost:5000/v1/generate/summary`,
+        { namespace: `${user.id}:${filename}`, type: summaryType },
+        { headers: { "Content-Type": "application/json" } }
       );
-
-      let summaryData = null;
+      let summaryData = response.data.summary || null;
+      const raw = response.data.raw || response.data.aiResponse || null;
       try {
-        const cleanResponse = response.data.aiResponse
-          .replace(/```json|```/g, "")
-          .trim();
-        summaryData = JSON.parse(cleanResponse);
+        if (raw && typeof raw === "string") {
+          const cleanResponse = raw.replace(/```json|```/g, "").trim();
+          summaryData = JSON.parse(cleanResponse);
+        }
       } catch (parseError) {
-        summaryData = extractSummaryFromText(response.data.aiResponse);
+        if (raw && typeof raw === "string") {
+          summaryData = extractSummaryFromText(raw);
+        }
         console.error(
           "Failed to parse JSON response, using fallback:",
           parseError
@@ -109,45 +101,62 @@ const Summary = () => {
       }
 
       if (summaryData) {
-        setSummary({
-          executiveSummary: summaryData.executiveSummary || "",
-          keyPoints: Array.isArray(summaryData.keyPoints)
-            ? summaryData.keyPoints
-            : [],
-          mainTopics: Array.isArray(summaryData.mainTopics)
-            ? summaryData.mainTopics
-            : [],
-          conclusions: Array.isArray(summaryData.conclusions)
-            ? summaryData.conclusions
-            : [],
-          actionItems: Array.isArray(summaryData.actionItems)
-            ? summaryData.actionItems
-            : [],
-          wordCount: summaryData.wordCount || 0,
-          readingTime: summaryData.readingTime || 0,
-        });
+        dispatch(
+          setSummaryData({
+            executiveSummary: summaryData.executiveSummary || "",
+            keyPoints: Array.isArray(summaryData.keyPoints)
+              ? summaryData.keyPoints
+              : [],
+            mainTopics: Array.isArray(summaryData.mainTopics)
+              ? summaryData.mainTopics
+              : [],
+            conclusions: Array.isArray(summaryData.conclusions)
+              ? summaryData.conclusions
+              : [],
+            actionItems: Array.isArray(summaryData.actionItems)
+              ? summaryData.actionItems
+              : [],
+            wordCount: summaryData.wordCount || 0,
+            readingTime: summaryData.readingTime || 0,
+          })
+        );
+        dispatch(setSummaryNamespace(ns));
       } else {
-        setError("Could not generate summary from the content.");
+        dispatch(
+          setSummaryError("Could not generate summary from the content.")
+        );
       }
     } catch (err) {
       console.error("Error generating summary:", err);
-      setError("Failed to generate summary. Please try again.");
+      dispatch(
+        setSummaryError("Failed to generate summary. Please try again.")
+      );
     } finally {
-      setLoading(false);
+      dispatch(setSummaryLoading(false));
     }
   };
 
   const extractSummaryFromText = (text: string) => {
+    if (!text || typeof text !== "string")
+      return {
+        executiveSummary: "Summary not available",
+        keyPoints: [],
+        mainTopics: ["General Content"],
+        conclusions: [],
+        actionItems: [],
+        wordCount: 0,
+        readingTime: 0,
+      };
     // Fallback text parsing
-    const lines = text.split("\n").filter((line) => line.trim());
+    const lines = text.split(/\r?\n/).filter((line) => line.trim());
     return {
       executiveSummary: lines[0] || "Summary not available",
       keyPoints: lines.slice(1, 6),
       mainTopics: ["General Content"],
       conclusions: lines.slice(-3),
       actionItems: [],
-      wordCount: text.split(" ").length,
-      readingTime: Math.ceil(text.split(" ").length / 200),
+      wordCount: text.split(/\s+/).length,
+      readingTime: Math.ceil(text.split(/\s+/).length / 200),
     };
   };
 
@@ -270,7 +279,7 @@ Document Statistics:
           <p className="text-sm">{error}</p>
         </div>
         <button
-          onClick={generateSummary}
+          onClick={() => generateSummary()}
           className="flex items-center space-x-2 bg-[#fafafa] text-black px-4 py-2 rounded-lg hover:bg-[#fafafa90] transition-colors"
         >
           <IoRefresh size={18} />
@@ -289,7 +298,7 @@ Document Statistics:
           Upload content to generate a summary
         </p>
         <button
-          onClick={generateSummary}
+          onClick={() => generateSummary()}
           className="flex items-center space-x-2 bg-[#fafafa] text-black px-4 py-2 rounded-lg hover:bg-[#fafafa90] transition-colors"
         >
           <IoRefresh size={18} />
@@ -369,7 +378,7 @@ Document Statistics:
           <span>Download</span>
         </button>
         <button
-          onClick={generateSummary}
+          onClick={() => generateSummary()}
           className="flex items-center space-x-2 border border-[#fafafa30] px-4 py-2 rounded-lg hover:bg-[#fafafa1a] transition-colors"
         >
           <IoRefresh size={18} />
